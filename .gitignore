@@ -1,0 +1,5 @@
+.DS_Store
+.npmignore
+.bithoundrc
+node_modules/
+www/js/config.js

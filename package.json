@@ -1,0 +1,22 @@
+{
+  "name": "Free-Weather-PhoneGap",
+  "version": "0.0.1",
+  "description": "A free weather app made using phonegap and the openweatherapi",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/phonegap/phonegap-app-hello-world.git"
+  },
+  "author": "Jason Godson",
+  "license": "MIT",
+  "keywords": [
+    "ecosystem:phonegap",
+    "ecosystem:cordova"
+  ],
+  "bugs": {
+    "url": "https://github.com/phonegap/phonegap-app-hello-world/issues"
+  },
+  "homepage": "https://github.com/phonegap/phonegap-app-hello-world",
+  "dependencies": {
+    "chart.js": "^2.3.0"
+  }
+}
