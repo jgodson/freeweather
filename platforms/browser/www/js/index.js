@@ -27,6 +27,7 @@ var app = {
     // 'load', 'deviceready', 'offline', and 'online'.
     bindEvents: function() {
         document.addEventListener('deviceready', this.onDeviceReady, false);
+        document.addEventListener('resume', this.onDeviceReady, false);
     },
     // deviceready Event Handler
     // The scope of 'this' is the event. In order to call the 'receivedEvent'

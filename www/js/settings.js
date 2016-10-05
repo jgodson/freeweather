@@ -1,17 +1,27 @@
-var defaultSettings = {
-  homeLocation : {
-    lat : 52.146973,
-    lng : -106.647034
-  },
-  system : {
+var userSettings;
+
+var settings = {
+  display : {
     'metric' : {
-      temp : 'C'
+      tempUnit : '&deg;C',
+      convertTemp : function(temp) {
+        return temp - 273.15;
+      }
     },
     'imperial' : {
-      temp : 'F'
+      tempUnit : '&deg;F',
+      convertTemp : function(temp) {
+        return temp * 9 / 5 - 459.67;
+      }
     }
-  },
-  backgroundChanges : true
+  }
 }
 
-var settings = appData.getSettings() || defaultSettings;
+var defaultSettings = {
+  system : 'metric',
+  backgroundChanges: true,
+  dayHours: {
+    min : 6,
+    max : 20
+  }
+}
