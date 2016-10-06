@@ -8,13 +8,20 @@ var appEvents = {
       console.log(((Date.parse(currentTime) - appData.getLastUpdated()) / 1000 / 60).toFixed(0), "minutes");
       if (Date.parse(currentTime) - appData.getLastUpdated() < 3600000 ) {
         // If still valid, display cached data
+        console.log('using previous data');
         var lastData = appData.getLastWeather();
+        console.log('got last weather data');
         ui.updateTime(appData.getLastUpdated());
+        console.log('updated time');
         ui.updateLocation(lastData.city.name, lastData.city.country);
+        console.log('updated city');
         ui.updateFutureWeather(lastData);
+        console.log('updated future weather data');
         ui.updateWeatherData(lastData);
+        console.log('updated weather data')
         // Check location to see if location changed
         appMethods.getCurrentLocation(false);
+        console.log('checked location data');
       }
       else {
         // Force wether update even if location hasn't changed much
@@ -95,6 +102,7 @@ var appEvents = {
 
 var appMethods = {
   getCurrentLocation : function(forced) {
+    console.log("gettings location");
     navigator.geolocation.getCurrentPosition(function(location) {
         appEvents.locationRecieved({
           lat : location.coords.latitude, 
@@ -156,8 +164,20 @@ var ui = {
     mainElement.getElementsByTagName('div')[1].innerText = today.weather[0].description;
     // Update the rain and snow % chance
     var precipdiv = document.getElementById('weather-chance');
-    precipdiv.children[0].children[2].innerText = ((today.rain['3h'] || 0) * 100).toFixed(1) + '%' // rain %
-    precipdiv.children[0].children[4].innerText = ((today.snow['3h'] || 0) * 100).toFixed(1) + '%' // snow %
+    // rain chance %
+    if (today.rain) {
+      precipdiv.children[0].children[2].innerText = ((today.rain['3h'] || 0) * 100).toFixed(1) + '%';
+    }
+    else {
+      precipdiv.children[0].children[2].innerText = '0.0%';
+    }
+    // snow chance %
+    if (today.snow) {
+      precipdiv.children[0].children[4].innerText = ((today.snow['3h'] || 0) * 100).toFixed(1) + '%';
+    }
+    else {
+      precipdiv.children[0].children[4].innerText = '0.0%';
+    }
     // After everything is updated, hide the loader screen
     this.hideLoader();
   },
@@ -175,7 +195,6 @@ var ui = {
       html += "</span></div>";
     }
     mainElement.innerHTML = html;
-    //app.setHeight();
   },
 
   updateBackground : function() {
@@ -197,9 +216,21 @@ var ui = {
   },
 
   convertTime : function(time, excludeYear) {
-    time = new Date(time).toString().split('G')[0].trim(); // Remove timezone
+    if (typeof time != 'number') {
+      // Convert it to something we can use for certain
+      //2016-10-06 18:00:00
+      time = time.split(' '); // [2016-10-06, 18:00:00]
+      time[0] = time[0].split('-'); // [2016, 10, 06]
+      time[1] = time[1].split(':'); // [18, 00, 00]
+      // Date(year, month - 1 for 0 index, day, hours, minutes, seconds, milliseconds)
+      time = new Date(time[0][0], time[0][1] - 1, time[0][2], time[1][0], time[1][1], time[1][2])
+        .toString().split('G')[0].trim(); // Create date and remove timezone
+    } 
+    else {
+      time = new Date(time).toString().split('G')[0].trim(); // Make it a date and remove timezone
+    }
     var ampm = 'AM';
-    time = time.split(' '); // split data/time into array
+    time = time.split(' '); // split date/time into array
     if (excludeYear) time[3] = ""; // remove year if desired
     time[4] = time[4].split(':'); // split time into array
     time[4].pop(); // Remove seconds
