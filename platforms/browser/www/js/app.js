@@ -9,9 +9,10 @@ var appEvents = {
       if (Date.parse(currentTime) - appData.getLastUpdated() < 3600000 ) {
         // If still valid, display cached data
         var lastData = appData.getLastWeather();
-        ui.updateWeatherData(lastData);
         ui.updateTime(appData.getLastUpdated());
         ui.updateLocation(lastData.city.name, lastData.city.country);
+        ui.updateFutureWeather(lastData);
+        ui.updateWeatherData(lastData);
         // Check location to see if location changed
         appMethods.getCurrentLocation(false);
       }
@@ -34,10 +35,10 @@ var appEvents = {
     ui.updateTime(Date.now());
     // Update the City and Country in the UI
     ui.updateLocation(data.city.name, data.city.country);
-    // Update the weather data
-    ui.updateWeatherData(data);
     // Update the future weather list
     ui.updateFutureWeather(data);
+    // Update the weather data
+    ui.updateWeatherData(data);
   },
 
   weatherAPIFailure : function (error) {
@@ -142,54 +143,73 @@ var ui = {
   updateWeatherData : function(weatherData) {
     var mainElement = document.getElementById('weather-primary');
     var img = mainElement.getElementsByTagName('img')[0];
-    var tempdiv = mainElement.getElementsByTagName('div')[1];
-
+    var tempdiv = mainElement.getElementsByTagName('div')[2];
     var today = weatherData.list[0];
     // Update the background if setting allows
     if (userSettings.backgroundChanges) this.updateBackground();
     // Set the weather icon to the proper image
     img.src = "img/icons/" + today.weather[0].icon + ".png";
-    // Convert temperature to proper units
+    // Convert temperature to proper units and show
     var temperature = settings.display[userSettings.system].convertTemp(today.main.temp).toFixed(1);
     tempdiv.innerHTML = temperature + ' ' + settings.display[userSettings.system].tempUnit;
+    // Update the description
+    mainElement.getElementsByTagName('div')[1].innerText = today.weather[0].description;
+    // Update the rain and snow % chance
+    var precipdiv = document.getElementById('weather-chance');
+    precipdiv.children[0].children[2].innerText = ((today.rain['3h'] || 0) * 100).toFixed(1) + '%' // rain %
+    precipdiv.children[0].children[4].innerText = ((today.snow['3h'] || 0) * 100).toFixed(1) + '%' // snow %
     // After everything is updated, hide the loader screen
     this.hideLoader();
   },
 
   updateFutureWeather : function(data) {
-    var mainElement = document.getElementById('weather-future');
+    var mainElement = document.getElementById('weather-future').children[0];
     var html = "";
-    for (var i = 4; i <= 24; i += 4) {
+    for (var i = 1; i < data.cnt; i++) {
       var imgsrc = "img/icons/" + data.list[i].weather[0].icon + ".png";
       html += "<div class='w-future'><span class='w-time'>";
-      html += data.weather[i].dt_txt.substring(4, 16) + "</span>";
+      html += this.convertTime(data.list[i].dt_txt, true).substring(4, 20) + "</span>";
       html += "<img class='small-icon' src='" + imgsrc + "' />";
       var temp = settings.display[userSettings.system].convertTemp(data.list[i].main.temp).toFixed(1);
-      html += "<div class='w-temp'>" + temp + ' ' + settings.display[userSettings.system].tempUnit;
-      html += "</div></div>";
+      html += "<span class='w-temp'>" + temp + ' ' + settings.display[userSettings.system].tempUnit;
+      html += "</span></div>";
     }
-    console.log(html);
     mainElement.innerHTML = html;
+    //app.setHeight();
   },
 
   updateBackground : function() {
     var currentHour = new Date().getHours();
+    var bodyElement = document.getElementsByTagName('body')[0];
     if (currentHour >= userSettings.dayHours.min 
       && currentHour < userSettings.dayHours.max) {
-
+        bodyElement.classList.remove('night');
+        bodyElement.classList.add('day');
+    }
+    else {
+      bodyElement.classList.remove('day');
+      bodyElement.classList.add('night');
     }
   },
 
   updateTime : function(time) {
-    time = new Date(time).toString().split('G')[0].trim();
+    document.getElementById('weather-updated').innerText = this.convertTime(time);
+  },
+
+  convertTime : function(time, excludeYear) {
+    time = new Date(time).toString().split('G')[0].trim(); // Remove timezone
     var ampm = 'AM';
-    time = time.split(' ');
-    time[4] = time[4].split(':');
-    if (parseInt(time[4][0]) > 12) ampm = 'PM';
-    if (ampm == 'PM') time[4][0] = parseInt(time[4][0]) - 12;
-    time[4] = time[4].join(':');
-    time = time.join(' ') + " " + ampm;
-    document.getElementById('weather-updated').innerText = time;
+    time = time.split(' '); // split data/time into array
+    if (excludeYear) time[3] = ""; // remove year if desired
+    time[4] = time[4].split(':'); // split time into array
+    time[4].pop(); // Remove seconds
+    if (parseInt(time[4][0]) >= 12) ampm = 'PM'; // check if am/pm
+    if (parseInt(time[4][0]) == 0 ) time[4][0] = parseInt(time[4][0]) + 12;
+    if (parseInt(time[4][0]) != 12 && ampm == 'AM') time[4][0] = time[4][0].substring(1);
+    if (parseInt(time[4][0]) > 12 && ampm == 'PM') time[4][0] = parseInt(time[4][0]) - 12; // subtract 12 hours if > 12
+    time[4] = time[4].join(':'); // combine time into string
+    time = time.join(' ') + " " + ampm; // combine into date/time string and add am/pm
+    return time;
   },
 
   hideLoader : function() {
@@ -203,36 +223,35 @@ var ui = {
 
 // Getters and setters for local storage
 var appData = {
-    setSettings : function(settings) {
-      localStorage.setItem("settings", JSON.stringify(settings));
-    },
+  setSettings : function(settings) {
+    localStorage.setItem("settings", JSON.stringify(settings));
+  },
 
-    getSettings : function() {
-      return JSON.parse(localStorage.getItem("settings"));
-    }, 
+  getSettings : function() {
+    return JSON.parse(localStorage.getItem("settings"));
+  }, 
 
-    setLastUpdated : function(time) {
-      localStorage.setItem("lastUpdated", time);
-    },
+  setLastUpdated : function(time) {
+    localStorage.setItem("lastUpdated", time);
+  },
 
-    getLastUpdated : function() {
-      return parseInt(localStorage.getItem("lastUpdated"));
-    },
+  getLastUpdated : function() {
+    return parseInt(localStorage.getItem("lastUpdated"));
+  },
 
-    setLastWeather : function (weatherData) {
-      localStorage.setItem("lastWeatherData", JSON.stringify(weatherData));
-    },
+  setLastWeather : function (weatherData) {
+    localStorage.setItem("lastWeatherData", JSON.stringify(weatherData));
+  },
 
-    getLastWeather : function() {
-      return JSON.parse(localStorage.getItem("lastWeatherData"));
-    },
+  getLastWeather : function() {
+    return JSON.parse(localStorage.getItem("lastWeatherData"));
+  },
 
-    setLastLocation : function(location) {
-      localStorage.setItem("lastLocation", JSON.stringify(location));
-    },
+  setLastLocation : function(location) {
+    localStorage.setItem("lastLocation", JSON.stringify(location));
+  },
 
-    getLastLocation : function() {
-      return JSON.parse(localStorage.getItem("lastLocation"));
-    }
-
+  getLastLocation : function() {
+    return JSON.parse(localStorage.getItem("lastLocation"));
+  }
 }

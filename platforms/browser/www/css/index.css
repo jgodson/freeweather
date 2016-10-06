@@ -43,30 +43,30 @@ body {
   background-attachment: fixed;
   font-family: 'HelveticaNeue-Light', 'HelveticaNeue', Helvetica, Arial, sans-serif;
   font-size: 100%;
-  height: calc(100% - 40px);
+  height: 100%;
   margin: 0;
-  padding: 40px 0 0 0;
+  padding: 0;
   width: 100%;
 }
 
 .day {
-  background-image:linear-gradient(top, #A7A7A7 0%, #E4E4E4 51%);
-  background-image:-webkit-linear-gradient(top, #A7A7A7 0%, #E4E4E4 51%);
-  background-image:-ms-linear-gradient(top, #A7A7A7 0%, #E4E4E4 51%);
-  background-image:-webkit-gradient(
+  background-image: linear-gradient(top, #419BD3 0%, #1CDD49 90%);
+  background-image: -webkit-linear-gradient(top, #419BD3 0%, #1CDD49 90%);
+  background-image: -ms-linear-gradient(top, #419BD3 0%, #1CDD49 90%);
+  background-image: -webkit-gradient(
     linear,
     left top,
     left bottom,
-    color-stop(0, orange),
-    color-stop(0.51, yellow)
+    color-stop(0, #419BD3),
+    color-stop(0.90, #1CDD49)
   );
 }
 
 .night {
-  background-image:linear-gradient(top, #A7A7A7 0%, #E4E4E4 51%);
-  background-image:-webkit-linear-gradient(top, #A7A7A7 0%, #E4E4E4 51%);
-  background-image:-ms-linear-gradient(top, #A7A7A7 0%, #E4E4E4 51%);
-  background-image:-webkit-gradient(
+  background-image: linear-gradient(top, #A7A7A7 0%, #E4E4E4 51%);
+  background-image: -webkit-linear-gradient(top, #A7A7A7 0%, #E4E4E4 51%);
+  background-image: -ms-linear-gradient(top, #A7A7A7 0%, #E4E4E4 51%);
+  background-image: -webkit-gradient(
     linear,
     left top,
     left bottom,
@@ -99,17 +99,16 @@ body {
 }
 
 #weather-primary div:first-of-type {
-
+  padding-bottom: 5px;
 }
 
 #weather-primary div:last-of-type {
-  padding-top: 5%;
   font-size: 250%;
 }
 
 #weather-updated {
   position: absolute;
-  bottom: 2%;
+  bottom: 0;
   left: calc(50% - 160px);
   width: 320px;
 }
@@ -128,17 +127,64 @@ body {
 
 .app {
   text-align: center;
+  overflow: auto;
+  height: calc(100% - 40px);
+  padding-top: 20px;
 }
 
 .small-icon {
   width: 24px;
   height: 24px;
+  padding: 0 5px;
+  vertical-align: middle;
 }
 
 #weather-chance p {
+  display: inline-block;
   text-align: left;
-  padding-left: 15%;
+  margin: 0 0 5px 0;
 }
+
+#weather-chance span {
+  vertical-align: middle;
+}
+
+.w-time {
+  display: table-header-group;
+}
+
+.w-future > .small-icon {
+  display: table-cell;
+  margin: auto;
+}
+
+.w-temp {
+  display: table-footer-group;
+}
+
+.w-future {
+  display: table;
+  float: left;
+  width: 120px;
+  height: 60px;
+  border: 1px solid black;
+  border-radius: 10px;
+  padding: 5px;
+  margin: 5px;
+}
+
+#weather-future {
+  overflow: scroll;
+  width: 100%;
+  height: calc(100% - 130px);
+}
+
+#weather-future > div {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
 
 @keyframes spin {
   from { transform: rotate(0deg); }
@@ -170,6 +216,20 @@ body {
 
   body {
     font-size: 120%;
+  }
+
+  .w-future {
+    width: 150px;
+  }
+
+  .app {
+    height: calc(100% - 50px);
+  }
+
+  #weather-future {
+    overflow: scroll;
+    width: 100%;
+    height: calc(100% - 160px);
   }
 }
 

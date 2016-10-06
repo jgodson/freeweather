@@ -17,22 +17,31 @@
  * under the License.
  */
 var app = {
-    // Application Constructor
-    initialize: function() {
-        this.bindEvents();
-    },
-    // Bind Event Listeners
-    //
-    // Bind any events that are required on startup. Common events are:
-    // 'load', 'deviceready', 'offline', and 'online'.
-    bindEvents: function() {
-        document.addEventListener('deviceready', this.onDeviceReady, false);
-        document.addEventListener('resume', this.onDeviceReady, false);
-    },
-    // deviceready Event Handler
-    // The scope of 'this' is the event. In order to call the 'receivedEvent'
-    // function, we must explicitly call 'app.receivedEvent(...);'
-    onDeviceReady: function() {
-        appEvents.ready();
-    }
+  // Application Constructor
+  initialize: function() {
+    this.bindEvents();
+  },
+  // Bind Event Listeners
+  //
+  // Bind any events that are required on startup. Common events are:
+  // 'load', 'deviceready', 'offline', and 'online'.
+  bindEvents: function() {
+    document.addEventListener('deviceready', this.onDeviceReady, false);
+    document.addEventListener('resume', this.onDeviceReady, false);
+    //window.addEventListener('resize', this.setHeight, false);
+  },
+  // deviceready Event Handler
+  // The scope of 'this' is the event. In order to call the 'receivedEvent'
+  // function, we must explicitly call 'app.receivedEvent(...);'
+  onDeviceReady: function() {
+    appEvents.ready();
+  },
+  // Set height of future weather div
+  // setHeight : function() {
+  //   document.getElementById('weather-future').style.maxHeight = ( window.innerHeight
+  //     - document.getElementById('weather-primary').offsetHeight 
+  //     - document.getElementById('weather-chance').offsetHeight
+  //     - document.getElementById('weather-updated').offsetHeight
+  //     - (window.innerHeight * 0.02) - 50 ) + 'px'; // padding bottom 2% + 20px top offset + 5px extra
+  // }
 };
