@@ -10,15 +10,7 @@ var appEvents = {
         // If still valid, display cached data
         console.log('using previous data');
         var lastData = appData.getLastWeather();
-        console.log('got last weather data');
-        ui.updateTime(appData.getLastUpdated());
-        console.log('updated time');
-        ui.updateLocation(lastData.city.name, lastData.city.country);
-        console.log('updated city');
-        ui.updateFutureWeather(lastData);
-        console.log('updated future weather data');
-        ui.updateWeatherData(lastData);
-        console.log('updated weather data')
+        ui.updateUI(lastData, appData.getLastUpdated());
         // Check location to see if location changed
         appMethods.getCurrentLocation(false);
         console.log('checked location data');
@@ -38,14 +30,8 @@ var appEvents = {
     // Update the cached data
     appData.setLastUpdated(Date.now());
     appData.setLastWeather(data);
-    // Update the last updated time with the current timestamp
-    ui.updateTime(Date.now());
-    // Update the City and Country in the UI
-    ui.updateLocation(data.city.name, data.city.country);
-    // Update the future weather list
-    ui.updateFutureWeather(data);
-    // Update the weather data
-    ui.updateWeatherData(data);
+    // Update UI
+    ui.updateUI(data, Date.now());
   },
 
   weatherAPIFailure : function (error) {
@@ -96,7 +82,24 @@ var appEvents = {
 
   alertDismissed : function(originalMessage) {
     // Log it to the console for debug
-    console.log(originalMessage);
+    console.log(originalMessage.toString());
+    // Show cached data if there is any
+    if (appData.getLastUpdated()) {
+      // If still valid, display cached data
+      console.log('error: using cached data');
+      var lastData = appData.getLastWeather();
+      ui.updateUI(lastData, appData.getLastUpdated());
+    }
+    else {
+      navigator.notification.alert(
+        'Unable to update weather data and no cached data found.',  
+        function() {
+          console.log("No data to display");
+        },      
+        'No Data',            
+        'OK'                  
+      );
+    }
   }
 }
 
@@ -110,6 +113,8 @@ var appMethods = {
         }, forced);
       }, function(error) {
         appEvents.locationError(error);
+      },{
+       timeout: 5000 // timeout so it doesn't sit there forever
       }
     );
   },
@@ -178,8 +183,6 @@ var ui = {
     else {
       precipdiv.children[0].children[4].innerText = '0.0%';
     }
-    // After everything is updated, hide the loader screen
-    this.hideLoader();
   },
 
   updateFutureWeather : function(data) {
@@ -216,14 +219,15 @@ var ui = {
   },
 
   convertTime : function(time, excludeYear) {
+    // TODO: FIX WRONG TIMEZONE ISSUE? AM/PM WRONG
     if (typeof time != 'number') {
-      // Convert it to something we can use for certain
-      //2016-10-06 18:00:00
+      // iPhone was having issues converting this just using new Date(time)
+      // 2016-10-06 18:00:00
       time = time.split(' '); // [2016-10-06, 18:00:00]
       time[0] = time[0].split('-'); // [2016, 10, 06]
       time[1] = time[1].split(':'); // [18, 00, 00]
       // Date(year, month - 1 for 0 index, day, hours, minutes, seconds, milliseconds)
-      time = new Date(time[0][0], time[0][1] - 1, time[0][2], time[1][0], time[1][1], time[1][2])
+      time = new Date(Date.UTC(time[0][0], parseInt(time[0][1]) - 1, time[0][2], time[1][0], time[1][1], time[1][2]))
         .toString().split('G')[0].trim(); // Create date and remove timezone
     } 
     else {
@@ -241,6 +245,19 @@ var ui = {
     time[4] = time[4].join(':'); // combine time into string
     time = time.join(' ') + " " + ampm; // combine into date/time string and add am/pm
     return time;
+  },
+
+  updateUI : function(data, time) {
+    ui.updateTime(time);
+    console.log('updated time');
+    ui.updateLocation(data.city.name, data.city.country);
+    console.log('updated city');
+    ui.updateFutureWeather(data);
+    console.log('updated future weather data');
+    ui.updateWeatherData(data);
+    console.log('updated weather data');
+    // After everything is updated, hide the loader screen
+    this.hideLoader();
   },
 
   hideLoader : function() {
