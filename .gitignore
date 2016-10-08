@@ -3,4 +3,4 @@
 .bithoundrc
 node_modules/
 www/js/config.js
-platforms/browser/www/js/config.js
+platforms

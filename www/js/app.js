@@ -219,7 +219,6 @@ var ui = {
   },
 
   convertTime : function(time, excludeYear) {
-    // TODO: FIX WRONG TIMEZONE ISSUE? AM/PM WRONG
     if (typeof time != 'number') {
       // iPhone was having issues converting this just using new Date(time)
       // 2016-10-06 18:00:00
