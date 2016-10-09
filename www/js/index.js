@@ -28,11 +28,12 @@ var app = {
   bindEvents: function() {
     document.addEventListener('deviceready', this.onDeviceReady, false);
     document.addEventListener('resume', this.onDeviceReady, false);
-    document.getElementById('settings-arrow').addEventListener('click', appEvents.menuOpen, false);
-    document.getElementById('app-content').addEventListener('click', appEvents.menuClose, false);
+    document.getElementById('settings-arrow').addEventListener('touchend', appEvents.menuOpen, false);
+    document.getElementById('app-content').addEventListener('touchstart', appEvents.menuClose, false);
+    // Add event listener for each menu item
     var elements = document.getElementsByClassName('setting');
     for (var index = 0; index < elements.length; index++) {
-      elements[index].addEventListener('click', appEvents.menuClick, false);
+      elements[index].addEventListener('touchend', appEvents.menuClick, false);
     }
   },
   // deviceready Event Handler
