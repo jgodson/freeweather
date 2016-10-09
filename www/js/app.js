@@ -99,6 +99,7 @@ var appEvents = {
         'No Data',            
         'OK'                  
       );
+      ui.hideLoader();
     }
   }
 }
