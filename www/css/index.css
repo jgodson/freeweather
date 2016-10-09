@@ -80,7 +80,7 @@ body {
   position: fixed;
   width: 100%;
   height: 100%;
-  z-index: 1000;
+  z-index: 2000;
   background-color: rgba(0, 0, 0, 0.8);
   color: white;
   font-size: 200%;
@@ -91,6 +91,82 @@ body {
 #loader.hidden {
   opacity: 0;
   display: none;
+}
+
+#settings {
+  position: fixed;
+  bottom: -100%;
+  right: 5px;
+  z-index: 500;
+  border-top-left-radius: 25px;
+  border-top-right-radius: 25px;
+  background-color: rgba(255, 255, 255, 0.8);
+  padding-bottom: 25px;
+  transition: all 300ms ease-in-out;
+}
+
+#settings #settings-arrow {
+  position: fixed;
+  z-index: 800;
+  width: 90px;
+  bottom: -10px;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 25px;
+}
+
+#settings.open #settings-arrow img {
+  transform: rotateX(180deg);
+  bottom: 0px;
+}
+
+#settings-arrow img {
+  width: 32px;
+  height: 32px;
+  transition: all 300ms ease-in-out 300ms;
+}
+
+#settings-arrow span {
+    position: relative;
+    bottom: 10px;
+    right: 2px;
+}
+
+#settings.open {
+  bottom: 0;
+}
+
+#settings > .setting {
+  width: 80px;
+  height: 80px;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 50%;
+  font-size: 12px;
+  margin: 5px;
+  display: table;
+}
+
+body.night #settings #settings-arrow {
+  background-color: rgba(255, 255, 255, 0.4);
+}
+
+body.night #settings {
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+body.night #settings > .setting {
+  background-color: rgba(255, 255, 255, 0.4);
+}
+
+.setting > img {
+  display: table-row;
+  width: 42px;
+  height: 42px;
+  margin: auto;
+  padding-top: 5px;
+}
+
+.setting > span {
+  display: table-row;
 }
 
 #weather-primary img {
@@ -107,9 +183,9 @@ body {
 }
 
 #weather-updated {
-  position: absolute;
+  position: fixed;
   bottom: 0;
-  left: calc(50% - 160px);
+  left: calc(50% - 205px);
   width: 320px;
 }
 
@@ -130,6 +206,10 @@ body {
   overflow: auto;
   height: calc(100% - 40px);
   padding-top: 20px;
+}
+
+#app-content {
+  height: 100%;
 }
 
 .small-icon {

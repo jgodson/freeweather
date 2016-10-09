@@ -28,20 +28,17 @@ var app = {
   bindEvents: function() {
     document.addEventListener('deviceready', this.onDeviceReady, false);
     document.addEventListener('resume', this.onDeviceReady, false);
-    //window.addEventListener('resize', this.setHeight, false);
+    document.getElementById('settings-arrow').addEventListener('click', appEvents.menuOpen, false);
+    document.getElementById('app-content').addEventListener('click', appEvents.menuClose, false);
+    var elements = document.getElementsByClassName('setting');
+    for (var index = 0; index < elements.length; index++) {
+      elements[index].addEventListener('click', appEvents.menuClick, false);
+    }
   },
   // deviceready Event Handler
   // The scope of 'this' is the event. In order to call the 'receivedEvent'
   // function, we must explicitly call 'app.receivedEvent(...);'
   onDeviceReady: function() {
     appEvents.ready();
-  },
-  // Set height of future weather div
-  // setHeight : function() {
-  //   document.getElementById('weather-future').style.maxHeight = ( window.innerHeight
-  //     - document.getElementById('weather-primary').offsetHeight 
-  //     - document.getElementById('weather-chance').offsetHeight
-  //     - document.getElementById('weather-updated').offsetHeight
-  //     - (window.innerHeight * 0.02) - 50 ) + 'px'; // padding bottom 2% + 20px top offset + 5px extra
-  // }
+  }
 };

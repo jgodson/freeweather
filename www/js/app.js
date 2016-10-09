@@ -101,6 +101,31 @@ var appEvents = {
       );
       ui.hideLoader();
     }
+  },
+
+  menuOpen : function() {
+    document.getElementById('settings').classList.toggle('open');
+  },
+
+  menuClose : function() {
+    document.getElementById('settings').classList.remove('open');
+  },
+
+  menuClick : function() {
+    menuMethods[this.getAttribute("data-name")].call();
+  },
+}
+
+var menuMethods = {
+  "temp-units" : function() {
+    if (userSettings.system == "metric") {
+      userSettings.system = "imperial";
+    }
+    else {
+      userSettings.system = "metric";
+    }
+    appData.setSettings(userSettings);
+    ui.updateUI(appData.getLastWeather(), appData.getLastUpdated());
   }
 }
 
@@ -159,8 +184,6 @@ var ui = {
     var img = mainElement.getElementsByTagName('img')[0];
     var tempdiv = mainElement.getElementsByTagName('div')[2];
     var today = weatherData.list[0];
-    // Update the background if setting allows
-    if (userSettings.backgroundChanges) this.updateBackground();
     // Set the weather icon to the proper image
     img.src = "img/icons/" + today.weather[0].icon + ".png";
     // Convert temperature to proper units and show
@@ -249,13 +272,11 @@ var ui = {
 
   updateUI : function(data, time) {
     ui.updateTime(time);
-    console.log('updated time');
     ui.updateLocation(data.city.name, data.city.country);
-    console.log('updated city');
     ui.updateFutureWeather(data);
-    console.log('updated future weather data');
+    // Update the background if setting allows
+    if (userSettings.backgroundChanges) this.updateBackground();
     ui.updateWeatherData(data);
-    console.log('updated weather data');
     // After everything is updated, hide the loader screen
     this.hideLoader();
   },
