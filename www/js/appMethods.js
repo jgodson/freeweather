@@ -1,6 +1,5 @@
 var appMethods = {
   getCurrentLocation : function(forced) {
-    console.log("gettings location");
     navigator.geolocation.getCurrentPosition(function(location) {
         appEvents.locationRecieved({
           lat : location.coords.latitude, 

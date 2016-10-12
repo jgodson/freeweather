@@ -18,18 +18,19 @@
  */
 var app = {
   // Application Constructor
-  initialize: function() {
+  initialize : function() {
     this.bindEvents();
   },
   // Bind Event Listeners
   //
   // Bind any events that are required on startup. Common events are:
   // 'load', 'deviceready', 'offline', and 'online'.
-  bindEvents: function() {
+  bindEvents : function() {
     document.addEventListener('deviceready', this.onDeviceReady, false);
     document.addEventListener('resume', this.onDeviceReady, false);
     document.getElementById('settings-arrow').addEventListener('touchend', appEvents.menuOpen, false);
-    document.getElementById('app-content').addEventListener('touchstart', appEvents.menuClose, false);
+    document.getElementById('app-content').addEventListener('touchstart', this.detectSwipe.startSwipe, false);
+    document.getElementById('app-content').addEventListener('touchend', this.detectSwipe.endSwipe, false);
     // Add event listener for each menu item
     var elements = document.getElementsByClassName('setting');
     for (var index = 0; index < elements.length; index++) {
@@ -39,7 +40,23 @@ var app = {
   // deviceready Event Handler
   // The scope of 'this' is the event. In order to call the 'receivedEvent'
   // function, we must explicitly call 'app.receivedEvent(...);'
-  onDeviceReady: function() {
+  onDeviceReady : function() {
     appEvents.ready();
+  },
+
+  detectSwipe : {
+    startX: 0,
+
+    startSwipe : function(event) {
+      appEvents.menuClose();
+      this.startX = event.changedTouches[0].clientX;
+    },
+
+    endSwipe : function(event) {
+      var endX = event.changedTouches[0].clientX;
+      if (Math.abs(this.startX - endX) > 150) {
+        appEvents.swipe(this.startX > endX ? 'L' : 'R');
+      }
+    }
   }
 };

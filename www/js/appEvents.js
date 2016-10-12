@@ -109,5 +109,9 @@ var appEvents = {
   menuClick : function() {
     // Call the function with the proper name in the menuMethods variable
     menuMethods[this.getAttribute("data-name")].call();
+  },
+
+  swipe : function(direction) {
+    console.log('direction', direction);
   }
 }
