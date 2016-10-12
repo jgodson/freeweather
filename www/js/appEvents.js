@@ -56,8 +56,8 @@ var appEvents = {
     var oldLocation = appData.getLastLocation();
     var locationChanged = false;
     if (oldLocation) {
-      locationChanged = oldLocation.lat.toFixed(2) !== latlng.lat.toFixed(2) ||
-        oldLocation.lng.toFixed(2) !== latlng.lng.toFixed(2);
+      locationChanged = oldLocation.lat.toFixed(1) !== latlng.lat.toFixed(1) ||
+        oldLocation.lng.toFixed(1) !== latlng.lng.toFixed(1);
     }
     if (locationChanged || forced) {
       // Store the last location object
