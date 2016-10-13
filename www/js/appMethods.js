@@ -25,14 +25,15 @@ var appMethods = {
           if (this.readyState == 4 && xhttpB.readyState == 4) {
             if (this.status == 200 && xhttpB.status == 200) {
               if (!completed) {
+                completed = true;
                 appEvents.weatherAPISuccess(
                   JSON.parse(this.responseText),
                   JSON.parse(xhttpB.responseText)
                 );
-                completed = true;
               }
             }
             else {
+              completed = true;
               if (!completed) appEvents.weatherAPIFailure(this.status);
             }
           }
@@ -45,14 +46,15 @@ var appMethods = {
           if (this.readyState == 4 && xhttpA.readyState == 4) {
             if (this.status == 200 && xhttpB.status == 200) {
               if (!completed) {
+                completed = true;
                 appEvents.weatherAPISuccess(
                   JSON.parse(xhttpA.responseText),
                   JSON.parse(this.responseText)
                 );
-                completed = true;
               }
             }
             else {
+              completed = true;
               if (!completed) appEvents.weatherAPIFailure(this.status);
             }
           }

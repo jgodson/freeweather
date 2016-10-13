@@ -57,28 +57,44 @@
         <img src="img/icons/temp-settings.png" />
         <span>&deg;C &deg;F</span>
       </div>
+      <div data-name="settings" class="setting">
+        <img src="img/icons/settings.png" />
+        <span>Settings</span>
+      </div>
       <div data-name="force-refresh" class="setting">
         <img src="img/icons/refresh.png" />
         <span>Refresh</span>
       </div>
     </div>
     <div id="app-content">
-      <div id="weather-primary">
-        <img src="img/icons/default.png" />
-        <div></div>
-        <div></div>
-        <div></div>
+      <div class='view inView' id='main'>
+        <div id="weather-primary">
+          <img src="img/icons/default.png" />
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+        <div id="weather-chance">
+          <p>
+            <span>PRECIPITATION</span>
+            <img class="small-icon" src="img/icons/rain-chance.png" /><span></span>
+            <img class="small-icon" src="img/icons/snow-chance.png" /><span></span>
+          </p>
+        </div>
+        <div id="weather-future"><div></div></div>
       </div>
-      <div id="weather-chance">
-        <p>
-          <span>PRECIPITATION</span>
-          <img class="small-icon" src="img/icons/rain-chance.png" /><span></span>
-          <img class="small-icon" src="img/icons/snow-chance.png" /><span></span>
-        </p>
+      <div class='view' id='charts'>
+        Charts
       </div>
-      <div id="weather-future"><div></div></div>
-      <div id="weather-updated"></div>
+      <div class='view' id='forecast'>
+        Forecast
+      </div>
+      <div id='settings-view'>
+        Settings
+        <button data-action="close">Close</button>
+      </div>
     </div>
+    <div id="weather-updated"></div>
   </div>
   <script type="text/javascript" src="cordova.js"></script>
   <script type="text/javascript" src="js/config.js"></script>
@@ -86,6 +102,7 @@
   <script type="text/javascript" src="js/appEvents.js"></script>
   <script type="text/javascript" src="js/appMethods.js"></script>
   <script type="text/javascript" src="js/menuMethods.js"></script>
+  <script type="text/javascript" src="js/views.js"></script>
   <script type="text/javascript" src="js/appData.js"></script>
   <script type="text/javascript" src="js/ui.js"></script>
   <script type="text/javascript" src="js/index.js"></script>

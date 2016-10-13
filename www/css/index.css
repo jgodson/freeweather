@@ -79,7 +79,6 @@ body {
   display: block;
   position: fixed;
   top: 0;
-  left: 0;
   width: 100%;
   height: 100%;
   z-index: 2000;
@@ -128,9 +127,9 @@ body {
 }
 
 #settings-arrow span {
-    position: relative;
-    bottom: 10px;
-    right: 2px;
+  position: relative;
+  bottom: 10px;
+  right: 2px;
 }
 
 #settings.open {
@@ -210,8 +209,9 @@ body.night #settings > .setting {
   padding-top: 20px;
 }
 
-#app-content {
+#app-content, .view {
   height: 100%;
+  width: 100%;
 }
 
 .small-icon {
@@ -258,15 +258,58 @@ body.night #settings > .setting {
 #weather-future {
   overflow: scroll;
   width: 100%;
-  height: calc(100% - 130px);
+  height: calc(100% - 170px);
 }
 
 #weather-future > div {
+  height: 100%;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
 }
 
+.view {
+  position: fixed;
+  right: -100%;
+  transition: all 300ms;
+}
+
+.inView {
+  right: 0;
+}
+
+#settings-view {
+  position: fixed;
+  top: -100%;
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(top, #A7A7A7 0%, #E4E4E4 51%);
+  background-image: -webkit-linear-gradient(top, #A7A7A7 0%, #E4E4E4 51%);
+  background-image: -ms-linear-gradient(top, #A7A7A7 0%, #E4E4E4 51%);
+  background-image: -webkit-gradient(
+    linear,
+    left top,
+    left bottom,
+    color-stop(0, #A7A7A7),
+    color-stop(0.51, #E4E4E4)
+  );
+  opacity: 0.5;
+  transition: all 400ms;
+}
+
+#settings-view.inView {
+  top: 0;
+  opacity: 1;
+}
+
+.jiggle {
+  animation: jiggle 75ms 3 alternate;
+}
+
+@keyframes jiggle {
+  from { left: -5px; }
+  to { left: 5px; }
+}
 
 @keyframes spin {
   from { transform: rotate(0deg); }

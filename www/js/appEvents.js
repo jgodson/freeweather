@@ -112,6 +112,6 @@ var appEvents = {
   },
 
   swipe : function(direction) {
-    console.log('direction', direction);
+    direction === 'L' ? view.moveRight() : view.moveLeft();
   }
 }
