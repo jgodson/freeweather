@@ -63,9 +63,9 @@ body {
 }
 
 .night {
-  background-image: linear-gradient(top, #A7A7A7 0%, #E4E4E4 51%);
-  background-image: -webkit-linear-gradient(top, #A7A7A7 0%, #E4E4E4 51%);
-  background-image: -ms-linear-gradient(top, #A7A7A7 0%, #E4E4E4 51%);
+  background-image: linear-gradient(top, #7979C1 0%, #174A8A 51%);
+  background-image: -webkit-linear-gradient(top, #7979C1 0%, #174A8A 51%);
+  background-image: -ms-linear-gradient(top, #7979C1 0%, #174A8A 51%);
   background-image: -webkit-gradient(
     linear,
     left top,
@@ -205,11 +205,11 @@ body.night #settings > .setting {
 .app {
   text-align: center;
   overflow: auto;
-  height: calc(100% - 40px);
-  padding-top: 20px;
+  height: calc(100% - 30px);
+  padding-top: 10px;
 }
 
-#app-content, .view {
+#app-content {
   height: 100%;
   width: 100%;
 }
@@ -258,7 +258,7 @@ body.night #settings > .setting {
 #weather-future {
   overflow: scroll;
   width: 100%;
-  height: calc(100% - 170px);
+  height: calc(100% - 125px);
 }
 
 #weather-future > div {
@@ -270,6 +270,8 @@ body.night #settings > .setting {
 
 .view {
   position: fixed;
+  height: calc(100% - 40px);
+  width: 100%;
   right: -100%;
   transition: all 300ms;
 }

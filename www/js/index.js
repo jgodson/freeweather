@@ -41,7 +41,7 @@ var app = {
   // The scope of 'this' is the event. In order to call the 'receivedEvent'
   // function, we must explicitly call 'app.receivedEvent(...);'
   onDeviceReady : function() {
-    StatusBar.overlaysWebView(false);
+    StatusBar.overlaysWebView(false); // Make sure webview doesn't overlap status bar
     view.initialize();
     appEvents.ready();
   },

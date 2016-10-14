@@ -17,8 +17,7 @@ var menuMethods = {
     // Settings buttons/actions
     settingsMethods = {
       "close" : function() {
-        settingsDiv.classList.remove('inView');
-        modifyListeners('remove');
+        closeSettings();
       }
     }
 
@@ -27,12 +26,14 @@ var menuMethods = {
 
     // If settings is not open, show it. If it is, hide it.
     if (settingsDiv.classList.length == 0) {
+      if (cordova.platformId != 'android') {
+        StatusBar.backgroundColorByHexString("#A7A7A7");
+      }
       settingsDiv.classList.add('inView');
       modifyListeners('add');
     }
     else {
-      settingsDiv.classList.remove('inView');
-      modifyListeners('remove');
+      closeSettings();
     }
 
     // Handler for clicking on one of the buttons in settings view
@@ -51,6 +52,16 @@ var menuMethods = {
           buttons[i].removeEventListener('touchstart', settingsButtonClick, false);
         }
       }
+    }
+
+    function closeSettings() {
+      modifyListeners('remove');
+      settingsDiv.classList.remove('inView');
+      setTimeout(function() {
+        if (cordova.platformId != 'android') {
+          ui.updateBackground();
+        }
+      }, 410);
     }
   }
 }

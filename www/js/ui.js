@@ -55,10 +55,16 @@ var ui = {
       && currentHour < userSettings.dayHours.max) {
         bodyElement.classList.remove('night');
         bodyElement.classList.add('day');
+        if (cordova.platformId != 'android') {
+          StatusBar.backgroundColorByHexString("#419BD3");
+        }
     }
     else {
       bodyElement.classList.remove('day');
       bodyElement.classList.add('night');
+      if (cordova.platformId != 'android') {
+        StatusBar.backgroundColorByHexString("#7979C1");
+      }
     }
   },
 
