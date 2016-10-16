@@ -59,6 +59,7 @@ var menuMethods = {
       settingsDiv.classList.remove('inView');
       setTimeout(function() {
         if (cordova.platformId != 'android') {
+          // Call update background to update status bar colors on iOS
           ui.updateBackground();
         }
       }, 410);

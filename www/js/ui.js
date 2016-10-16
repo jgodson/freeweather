@@ -19,17 +19,17 @@ var ui = {
     var precipdiv = document.getElementById('weather-chance');
     // rain chance %
     if (today.rain) {
-      precipdiv.children[0].children[2].innerText = ((today.rain['3h'] || 0) * 100).toFixed(1) + '%';
+      precipdiv.children[0].children[2].innerText = today.rain['3h'] + ' mm';
     }
     else {
-      precipdiv.children[0].children[2].innerText = '0.0%';
+      precipdiv.children[0].children[2].innerText = 'none';
     }
     // snow chance %
     if (today.snow) {
-      precipdiv.children[0].children[4].innerText = ((today.snow['3h'] || 0) * 100).toFixed(1) + '%';
+      precipdiv.children[0].children[4].innerText = today.snow['3h'] + ' mm';
     }
     else {
-      precipdiv.children[0].children[4].innerText = '0.0%';
+      precipdiv.children[0].children[4].innerText = 'none';
     }
   },
 

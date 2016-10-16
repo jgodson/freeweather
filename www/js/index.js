@@ -27,7 +27,7 @@ var app = {
   // 'load', 'deviceready', 'offline', and 'online'.
   bindEvents : function() {
     document.addEventListener('deviceready', this.onDeviceReady, false);
-    document.addEventListener('resume', this.onDeviceReady, false);
+    document.addEventListener('resume', this.onResume, false);
     document.getElementById('settings-arrow').addEventListener('touchstart', appEvents.menuOpen, false);
     document.getElementById('app-content').addEventListener('touchstart', this.detectSwipe.startSwipe, false);
     document.getElementById('app-content').addEventListener('touchend', this.detectSwipe.endSwipe, false);
@@ -42,7 +42,11 @@ var app = {
   // function, we must explicitly call 'app.receivedEvent(...);'
   onDeviceReady : function() {
     StatusBar.overlaysWebView(false); // Make sure webview doesn't overlap status bar
-    view.initialize();
+    view.initialize(); // Populate Views Array with all views (class='view')
+    appEvents.ready();
+  },
+
+  onResume : function() {
     appEvents.ready();
   },
 
