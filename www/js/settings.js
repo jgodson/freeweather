@@ -22,14 +22,10 @@ var settings = {
         return mm * 0.039370; // convert to inches
       }
     }
-  }
-}
+  },
 
-var defaultSettings = {
-  system : 'metric',
-  backgroundChanges: true,
-  dayHours: {
-    min : 6,
-    max : 20
+  defaultSettings : {
+    system : 'metric',
+    backgroundChanges: true
   }
 }

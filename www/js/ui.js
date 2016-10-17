@@ -52,23 +52,25 @@ var ui = {
     mainElement.innerHTML = html;
   },
 
-  updateBackground : function() {
-    var currentHour = new Date().getHours();
+  updateBackground : function(changeStatusBar) {
     var bodyElement = document.getElementsByTagName('body')[0];
+    var currentHour = new Date().getHours();
     if (currentHour >= userSettings.dayHours.min 
       && currentHour < userSettings.dayHours.max) {
         bodyElement.classList.remove('night');
         bodyElement.classList.add('day');
-        if (cordova.platformId != 'android') {
-          StatusBar.backgroundColorByHexString("#419BD3");
-        }
+        if (changeStatusBar) this.updateStatusBar("#419BD3");
     }
     else {
       bodyElement.classList.remove('day');
       bodyElement.classList.add('night');
-      if (cordova.platformId != 'android') {
-        StatusBar.backgroundColorByHexString("#7979C1");
-      }
+      if (changeStatusBar) this.updateStatusBar("#7979C1");
+    }
+  },
+
+  updateStatusBar : function(hexColor) {
+    if (cordova.platformId != 'android') {
+      StatusBar.backgroundColorByHexString(hexColor);
     }
   },
 
@@ -110,7 +112,7 @@ var ui = {
     this.updateLocation(data[0].name, data[0].sys.country);
     this.updateFutureWeather(data[1]);
     // Update the background if setting allows
-    if (userSettings.backgroundChanges) this.updateBackground();
+    if (userSettings.backgroundChanges) this.updateBackground(true);
     this.updateWeatherData(data[0]);
     // After everything is updated, hide the loader screen
     this.hideLoader();

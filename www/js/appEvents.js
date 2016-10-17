@@ -1,6 +1,5 @@
 var appEvents = {
   ready : function() {
-    userSettings = appData.getSettings() || defaultSettings;
     var currentTime = new Date();
     // Check if we have a stored result
     if (appData.getLastUpdated()) {
@@ -112,6 +111,6 @@ var appEvents = {
   },
 
   swipe : function(direction) {
-    direction === 'L' ? view.moveRight() : view.moveLeft();
+    direction === 'L' ? views.moveRight() : views.moveLeft();
   }
 }
