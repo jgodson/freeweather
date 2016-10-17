@@ -8,7 +8,7 @@ var appMethods = {
       }, function(error) {
         appEvents.locationError(error);
       },{
-       timeout: 5000 // timeout so it doesn't sit there forever
+       timeout: 8000 // timeout so it doesn't sit there forever
       }
     );
   },

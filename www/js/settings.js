@@ -6,20 +6,20 @@ var settings = {
       tempUnit : '&deg;C',
       measurementUnit : 'mm',
       convertTemp : function(temp) {
-        return temp - 273.15;
+        return temp - 273.15; // celcius
       },
       convertMeasurement : function(mm) {
-        return mm;
+        return mm; // already in mm
       }
     },
     'imperial' : {
       tempUnit : '&deg;F',
       measurementUnit : 'in',
       convertTemp : function(temp) {
-        return temp * 9 / 5 - 459.67;
+        return temp * 9 / 5 - 459.67; // fahrenheit
       },
       convertMeasurement : function(mm) {
-        return mm * 0.039370;
+        return mm * 0.039370; // convert to inches
       }
     }
   }

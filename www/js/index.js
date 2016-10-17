@@ -41,6 +41,10 @@ var app = {
   // The scope of 'this' is the event. In order to call the 'receivedEvent'
   // function, we must explicitly call 'app.receivedEvent(...);'
   onDeviceReady : function() {
+    // Change iOS status bar to somewhat match loading screen
+    if (cordova.platformId != 'android') {
+      StatusBar.backgroundColorByHexString("#141414");
+    }
     StatusBar.overlaysWebView(false); // Make sure webview doesn't overlap status bar
     view.initialize(); // Populate Views Array with all views (class='view')
     appEvents.ready();

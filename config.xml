@@ -99,6 +99,7 @@
     <platform name="ios">
         <allow-intent href="itms:*" />
         <allow-intent href="itms-apps:*" />
+        <preference name="StatusBarBackgroundColor" value="#141414" />
     </platform>
     <feature name="StatusBar">
         <param name="ios-package" value="CDVStatusBar" onload="true" />

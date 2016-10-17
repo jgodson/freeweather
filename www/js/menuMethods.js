@@ -10,6 +10,9 @@ var menuMethods = {
     ui.updateUI(appData.getLastWeather(), appData.getLastUpdated());
   },
   "force-refresh" : function() {
+    if (cordova.platformId != 'android') {
+      StatusBar.backgroundColorByHexString("#141414");
+    }
     ui.showLoader();
     appMethods.getCurrentLocation(true);
   },
@@ -26,6 +29,7 @@ var menuMethods = {
 
     // If settings is not open, show it. If it is, hide it.
     if (settingsDiv.classList.length == 0) {
+      // On iOS change status bar to match status screen color
       if (cordova.platformId != 'android') {
         StatusBar.backgroundColorByHexString("#A7A7A7");
       }
