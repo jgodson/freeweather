@@ -81,19 +81,18 @@
             <img class="small-icon" src="img/icons/snow-chance.png" /><span></span>
           </p>
         </div>
-        <div id="weather-future"><div></div></div>
       </div>
       <div class='view' id='charts'>
-        Charts
+        <canvas id="hourlyChart" width="320" height="320"></canvas>
       </div>
       <div class='view' id='forecast'>
-        Forecast
+        <div id="weather-future"><div></div></div>
       </div>
       <div id='settings-view'>
         <div><label>Allow Background Changes</label><input data-action="background" type="checkbox"></div>
         <div class='attribution'>
           <button data-action="close">Close</button>
-          <p>The awesome icons you see in this app are from Icons8 - https://icons8.com/</p>
+          <p>The icons used in this app, as well as many more, are available from Icons8 - https://icons8.com/</p>
           <p>Weather data retrieved from https://openweathermap.org/</p>
         </div>
       </div>
@@ -110,6 +109,7 @@
   <script type="text/javascript" src="js/appData.js"></script>
   <script type="text/javascript" src="js/ui.js"></script>
   <script type="text/javascript" src="js/index.js"></script>
+  <script type="text/javascript" src="js/Chart.bundle.min.js"></script>
   <script type="text/javascript">
       app.initialize();
   </script>

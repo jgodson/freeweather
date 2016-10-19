@@ -32,3 +32,23 @@ var appData = {
     return JSON.parse(localStorage.getItem("lastLocation"));
   }
 }
+
+var constants = {
+  DAYMAP : { 
+    Sun : "sunday",
+    Mon : "monday",
+    Tue : "tuesday",
+    Wed : "wednesday",
+    Thu : "thursday",
+    Fri : "friday",
+    Sat : "saturday"
+  },
+  TEMPMAP : {
+    C : "Celcius",
+    F : "Farenheit"
+  },
+  UNITMAP : {
+    mm : "Milimeters",
+    in : "Inches"
+  }
+}

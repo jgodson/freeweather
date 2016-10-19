@@ -44,13 +44,14 @@ var app = {
     // Change iOS status bar to somewhat match loading screen
     ui.updateStatusBar("#141414");
     StatusBar.overlaysWebView(false); // Make sure webview doesn't overlap status bar
+    StatusBar.styleDefault();
     userSettings = appData.getSettings() || settings.defaultSettings;
     views.initialize(); // Populate Views Array with all views (class='view')
-    appEvents.ready();
+    appEvents.ready(); // Signal that everything is initialized and ready to work
   },
 
   onResume : function() {
-    appEvents.ready();
+    appEvents.ready(); // Skip all the initialization on resume
   },
 
   detectSwipe : {
