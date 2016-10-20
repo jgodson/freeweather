@@ -28,6 +28,7 @@ var app = {
   bindEvents : function() {
     document.addEventListener('deviceready', this.onDeviceReady, false);
     document.addEventListener('resume', this.onResume, false);
+    window.addEventListener('resize', ui.drawSunriseSunset, false);
     document.getElementById('settings-arrow').addEventListener('touchstart', appEvents.menuOpen, false);
     document.getElementById('app-content').addEventListener('touchstart', this.detectSwipe.startSwipe, false);
     document.getElementById('app-content').addEventListener('touchend', this.detectSwipe.endSwipe, false);

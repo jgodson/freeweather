@@ -37,46 +37,78 @@ var ui = {
     }
   },
 
+  drawSunriseSunset : function() {
+    // Grab the data we need to calculate everything
+    var today = appData.getLastWeather()[0],
+      progressDiv = document.getElementsByClassName('day-progress')[0],
+      progressImgs = progressDiv.getElementsByTagName('img'),
+      progressWidth = progressImgs[0].parentElement.parentElement.clientWidth,
+      now = Date.now(),
+      sunrise = today.sys.sunrise * 1000,
+      sunset = now > sunrise ? today.sys.sunset * 1000 
+        : appData.getLastSunset() // Or if there is no last sunset, subtract 1 day from this one
+        || new Date(new Date(today.sys.sunset * 1000).setDate(new Date().getDate() -1)).getTime(),
+      night = now > sunset,
+      percent;
+    console.log(now, sunset, sunrise);
+    if (night) {
+      percent = (now - sunset) / (sunrise - sunset);
+      console.log("night", (now - sunset), (sunrise - sunset));
+    }
+    else {
+      if (sunset != appData.getLastSunset()) {
+        appData.setLastSunset(sunset);
+      }
+      percent = (now - sunrise) / (sunset - sunrise);
+    }
+    console.log(percent);
+    // Adjust position of sun/moon
+    progressImgs[1].style.left = (progressWidth - 28) * percent + 'px';
+    progressImgs[1].style.top = percent >= .5 ?
+     (38 * percent) - 40 + 'px' 
+     : (38 * (1 - percent)) - 40 + 'px';
+    // Select proper images
+    if (night) {
+        if (now < sunrise) {
+        progressImgs[0].src = "img/icons/sunset.png";
+        progressImgs[1].src = "img/icons/moon.png";
+        progressImgs[2].src = "img/icons/sunrise.png";
+      }
+      else {
+        progressImgs[0].src = "img/icons/sunrise.png";
+        progressImgs[1].src = "img/icons/01d.png";
+        progressImgs[2].src = "img/icons/sunset.png";
+      }
+    }
+    else {
+      if (now < sunset) {
+        progressImgs[0].src = "img/icons/sunrise.png";
+        progressImgs[1].src = "img/icons/01d.png";
+        progressImgs[2].src = "img/icons/sunset.png";
+      }
+      else {
+        progressImgs[0].src = "img/icons/sunset.png";
+        progressImgs[1].src = "img/icons/moon.png";
+        progressImgs[2].src = "img/icons/sunrise.png";
+      }
+    }
+    
+  },
+
+  // DEBUG
+  updatePercent : function(percent) {
+    var progressDiv = document.getElementsByClassName('day-progress')[0],
+      progressImgs = progressDiv.getElementsByTagName('img'),
+      dayImageDiv = progressDiv.getElementsByClassName('day-image')[0],
+      progressWidth = progressImgs[0].parentElement.parentElement.clientWidth;
+    progressImgs[1].style.left = (progressWidth - 28) * percent + 'px';
+    progressImgs[1].style.top = percent >= .5 ?
+     (38 * percent) - 40 + 'px' 
+     : (38 * (1 - percent)) - 40 + 'px';
+  },
+
   updateFutureWeather : function(data) {
     var mainElement = document.getElementById('weather-future').children[0];
-    var chartData = {
-      labels : [],
-      datasets : [
-        {
-          type: 'line',
-          label: "Temperature",
-          fill: false,
-          lineTension: 0.3,
-          backgroundColor: "rgba(40, 224, 218, 0.4)",
-          borderColor: "rgba(0, 85, 255, 1)",
-          borderCapStyle: 'round',
-          borderDash: [],
-          borderDashOffset: 0.0,
-          borderJoinStyle: 'round',
-          pointBorderColor: "rgba(40, 224, 218, 1)",
-          pointBackgroundColor: "#fff",
-          pointBorderWidth: 1,
-          pointHoverRadius: 5,
-          pointHoverBackgroundColor: "rgba(40, 224, 218, 1)",
-          pointHoverBorderColor: "rgba(0, 0, 0, 1)",
-          pointHoverBorderWidth: 2,
-          pointRadius: 1,
-          pointHitRadius: 10,
-          data: [],
-          spanGaps: false
-        },
-        {
-          type : 'bar',
-          label : 'Precipitation',
-          yAxisID : 'precipitation',
-          backgroundColor : 'rgba(247, 160, 126, 0.8)',
-          borderColor : 'rgba(247, 160, 126, 1)',
-          borderWidth : 1,
-          hoverBorderWidth : 2,
-          data : []
-        }
-      ]
-    };
     var date;
     var temp;
     var html = "";
@@ -111,26 +143,16 @@ var ui = {
       temp = settings.display[userSettings.system].convertTemp(data.list[i].main.temp).toFixed(1);
       html += "<span class='w-temp'>" + temp + ' ' + settings.display[userSettings.system].tempUnit;
       html += "</span></div>";
-      // Add date and temp to chart data
-      chartData.labels.push(date.substring(0, 3) + date.substring(10));
-      chartData.datasets[0].data.push(temp);
-      // Add precipitation to chart data
-      precipitation = data.list[i].rain ? 
-        settings.display[userSettings.system].convertMeasurement(data.list[i].rain['3h']) || 0 
-        : 0;
-      precipitation += data.list[i].snow ? 
-        settings.display[userSettings.system].convertMeasurement(data.list[i].snow['3h']) || 0 
-        : 0;
-      chartData.datasets[1].data.push(precipitation.toFixed(2));
     }
-    this.chartMethods.clearChart();
-    this.chartMethods.drawHourlyChart(chartData);
     mainElement.innerHTML = html;
   },
 
   chartMethods : {
     chart : null,
+    maxPoints : undefined,
+    chartTitle : "Five Day Trend",
     drawHourlyChart : function(hourlyData) {
+      this.clearChart();
       Chart.defaults.global.defaultFontColor = "#000";
       var tUnits = constants.TEMPMAP[settings.display[userSettings.system].tempUnit.substring(5)];
       var mUnits = constants.UNITMAP[settings.display[userSettings.system].measurementUnit];
@@ -141,12 +163,14 @@ var ui = {
         options : {
           title : {
             display : true,
-            text : "Five Day Trend",
+            text : this.chartTitle,
             fontSize : 18,
             padding : 20
           },
           tooltips : {
-            mode : 'label'
+            mode : 'label',
+            titleFontSize : 18,
+            bodyFontSize : 14
           },
           scales : {
             yAxes : [
@@ -180,6 +204,79 @@ var ui = {
           }
         }
       });
+    },
+
+    initializeChart : function(data, maxPoints) {
+      if (!this.maxPoints) this.maxPoints = data.cnt;
+      var chartData = {
+        labels : [],
+        datasets : [
+          {
+            type: 'line',
+            label: "Temperature",
+            fill: false,
+            lineTension: 0.3,
+            backgroundColor: "rgba(40, 224, 218, 0.4)",
+            borderColor: "rgba(0, 85, 255, 1)",
+            borderCapStyle: 'round',
+            borderDash: [],
+            borderDashOffset: 0.0,
+            borderJoinStyle: 'round',
+            pointBorderColor: "rgba(40, 224, 218, 1)",
+            pointBackgroundColor: "#fff",
+            pointBorderWidth: 1,
+            pointHoverRadius: 5,
+            pointHoverBackgroundColor: "rgba(40, 224, 218, 1)",
+            pointHoverBorderColor: "rgba(0, 0, 0, 1)",
+            pointHoverBorderWidth: 2,
+            pointRadius: 1,
+            pointHitRadius: 10,
+            data: [],
+            spanGaps: false
+          },
+          {
+            type : 'bar',
+            label : 'Precipitation',
+            yAxisID : 'precipitation',
+            backgroundColor : 'rgba(247, 160, 126, 0.8)',
+            borderColor : 'rgba(247, 160, 126, 1)',
+            borderWidth : 1,
+            hoverBorderWidth : 2,
+            data : []
+          }
+        ]
+      };
+      var date,
+        temp,
+        precipitation;
+      for (var i = 0; i < this.maxPoints && data.list[i] != undefined; i++) {
+        date = ui.convertTime(data.list[i].dt_txt, true).substring(0, 20);
+        temp = settings.display[userSettings.system].convertTemp(data.list[i].main.temp).toFixed(1);
+        // Add date and temp to chart data
+        chartData.labels.push(date.substring(0, 3) + date.substring(10));
+        chartData.datasets[0].data.push(temp);
+        // Add precipitation to chart data
+        precipitation = data.list[i].rain ? 
+          settings.display[userSettings.system].convertMeasurement(data.list[i].rain['3h']) || 0 
+          : 0;
+        precipitation += data.list[i].snow ? 
+          settings.display[userSettings.system].convertMeasurement(data.list[i].snow['3h']) || 0 
+          : 0;
+        chartData.datasets[1].data.push(precipitation.toFixed(2));
+      }
+      this.drawHourlyChart(chartData);
+    },
+
+    changeChartDays : function(days) {
+      // redraw chart with proper # of points. 8 points per day
+      var DAYS = {
+        1 : "One",
+        3 : "Three",
+        5 : "Five"
+      }
+      this.maxPoints = 8 * days;
+      this.chartTitle = DAYS[days] + " Day Trend";
+      this.initializeChart(appData.getLastWeather()[1]);
     },
 
     clearChart : function() {
@@ -245,6 +342,7 @@ var ui = {
     this.updateTime(time);
     this.updateLocation(data[0].name, data[0].sys.country);
     this.updateFutureWeather(data[1]);
+    this.chartMethods.initializeChart(data[1]);
     // Update the background if setting allows 
     // find sunrise and sunset values for background changes
     // unix timestamp * 1000 for epoch date
@@ -252,6 +350,7 @@ var ui = {
     var sunset = new Date(data[0].sys.sunset * 1000).getHours();
     if (userSettings.backgroundChanges) this.updateBackground(true, sunrise, sunset);
     this.updateWeatherData(data[0]);
+    this.drawSunriseSunset();
     // After everything is updated, hide the loader screen
     this.hideLoader();
   },

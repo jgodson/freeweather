@@ -309,6 +309,54 @@ body.night #settings > .setting {
   animation: jiggle 75ms 3 alternate;
 }
 
+#weather-extended {
+  padding-top: 10px;
+}
+
+.day-progress {
+  height: 100px;  
+  border: solid 3px #000;
+  border-color: #000 transparent transparent;
+  border-radius: 50%/100px 100px 0 0;
+}
+
+.day-image {
+  top: -6px;
+}
+
+.day-progress div {
+  position: relative;
+}
+
+.day-progress div img {
+  top: 36px;
+}
+
+.day-progress div:first-of-type img {
+  position: absolute;
+  left: 10px;
+}
+
+.day-progress div:last-of-type img {
+  position: absolute;
+  right: 10px;
+}
+
+.day-image img {
+  position: absolute;
+  top: 24px;
+  left: 20px;
+}
+
+#chart-buttons {
+  padding-top: 20px;
+}
+
+#chart-buttons button {
+  width: 30%;
+  height: 50px;
+}
+
 @keyframes jiggle {
   from { left: -10px; }
   to { left: 10px; }

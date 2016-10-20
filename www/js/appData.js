@@ -30,6 +30,14 @@ var appData = {
 
   getLastLocation : function() {
     return JSON.parse(localStorage.getItem("lastLocation"));
+  },
+
+  setLastSunset : function(time) {
+    localStorage.setItem("lastSunset", time);
+  },
+
+  getLastSunset : function () {
+    return parseInt(localStorage.getItem("lastSunset"));
   }
 }
 

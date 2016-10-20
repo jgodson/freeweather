@@ -81,9 +81,23 @@
             <img class="small-icon" src="img/icons/snow-chance.png" /><span></span>
           </p>
         </div>
+        <div id="weather-extended">
+          <div class='day-progress'>
+            <div><img class='small-icon' src="img/icons/sunrise.png" /></div>
+            <div class="day-image"><img class='small-icon' src="img/icons/01d.png" /></div>
+            <div><img class='small-icon' src="img/icons/sunset.png" /></div>
+          </div>
+          <div><img class="small-icon" src="img/icons/03d.png" /><span class='cloud-cover'></span></div>
+
+        </div>
       </div>
       <div class='view' id='charts'>
         <canvas id="hourlyChart" width="320" height="320"></canvas>
+        <div id="chart-buttons">
+          <button ontouchstart="ui.chartMethods.changeChartDays(1);">1 Day</button>
+          <button ontouchstart="ui.chartMethods.changeChartDays(3);">3 Days</button>
+          <button ontouchstart="ui.chartMethods.changeChartDays(5);">5 Days</button>
+        </div>
       </div>
       <div class='view' id='forecast'>
         <div id="weather-future"><div></div></div>
