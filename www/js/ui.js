@@ -68,7 +68,7 @@ var ui = {
       childDivs[2].children[1].innerText = ui.convertTime(sunset).substring(16);
     }
     // Adjust position of sun/moon
-    progressImgs[1].style.left = progressWidth * percent - 12 + 'px';
+    progressImgs[1].style.left = (progressWidth - 28) * percent + 'px';
     progressImgs[1].style.top = percent < 0.5 ?
       10 - 38 * (percent * 2) + 'px'
       : 10 - 38 * ((1 - percent) * 2) + 'px';
@@ -100,18 +100,6 @@ var ui = {
     
   },
 
-  // DEBUG
-  updatePercent : function(percent) {
-    var progressDiv = document.getElementsByClassName('day-progress')[0],
-      progressImgs = progressDiv.getElementsByTagName('img'),
-      dayImageDiv = progressDiv.getElementsByClassName('day-image')[0],
-      progressWidth = progressImgs[0].parentElement.parentElement.clientWidth;
-    progressImgs[1].style.left = (progressWidth - 28) * percent + 'px';
-    progressImgs[1].style.top = percent < 0.5 ?
-      10 - 38 * (percent * 2) + 'px'
-      : 10 - 38 * ((1 - percent) * 2) + 'px';
-  },
-
   updateCloudCover : function(data) {
     var element = document.getElementsByClassName('cloud-cover')[0]
       .getElementsByTagName('span')[0];
@@ -135,6 +123,10 @@ var ui = {
     elements[1].innerText = 
       settings.display[userSettings.system].convertPressure(data.main.pressure).toFixed(1)
       + " " + settings.display[userSettings.system].pressureUnit;
+  },
+
+  updateThreeDay : function(data) {
+
   },
 
   updateFutureWeather : function(data) {

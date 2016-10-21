@@ -179,6 +179,10 @@ body.night #settings > .setting {
   padding-bottom: 5px;
 }
 
+#weather-primary div:nth-child(3) {
+  text-transform: capitalize;
+}
+
 #weather-primary div:last-of-type {
   font-size: 250%;
 }
@@ -408,9 +412,20 @@ body.night #settings > .setting {
   padding: 5px 0;
 }
 
-.wind img {
+.wind > img:first-of-type {
   width: 64px;
   height: 64px;
+}
+
+.wind div {
+  height: 0;
+}
+
+.wind div img {
+  width: 24px;
+  height: 24px;
+  bottom: 70px;
+  position: relative;
 }
 
 .humidity-pressure {
