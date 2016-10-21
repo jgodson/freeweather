@@ -42,7 +42,7 @@ var ui = {
     var today = appData.getLastWeather()[0],
       progressDiv = document.getElementsByClassName('day-progress')[0],
       progressImgs = progressDiv.getElementsByTagName('img'),
-      progressWidth = progressImgs[0].parentElement.parentElement.clientWidth,
+      progressWidth = progressDiv.clientWidth,
       now = Date.now(),
       sunrise = today.sys.sunrise * 1000,
       sunset = now > sunrise ? today.sys.sunset * 1000 
@@ -50,10 +50,8 @@ var ui = {
         || new Date(new Date(today.sys.sunset * 1000).setDate(new Date().getDate() -1)).getTime(),
       night = now > sunset,
       percent;
-    console.log(now, sunset, sunrise);
     if (night) {
       percent = (now - sunset) / (sunrise - sunset);
-      console.log("night", (now - sunset), (sunrise - sunset));
     }
     else {
       if (sunset != appData.getLastSunset()) {
@@ -61,13 +59,12 @@ var ui = {
       }
       percent = (now - sunrise) / (sunset - sunrise);
     }
-    console.log(percent);
     // Adjust position of sun/moon
-    progressImgs[1].style.left = (progressWidth - 28) * percent + 'px';
-    progressImgs[1].style.top = percent >= .5 ?
-     (38 * percent) - 40 + 'px' 
-     : (38 * (1 - percent)) - 40 + 'px';
-    // Select proper images
+    progressImgs[1].style.left = progressWidth * percent - 12 + 'px';
+    progressImgs[1].style.top = percent < 0.5 ?
+      10 - 38 * (percent * 2) + 'px'
+      : 10 - 38 * ((1 - percent) * 2) + 'px';
+
     if (night) {
         if (now < sunrise) {
         progressImgs[0].src = "img/icons/sunset.png";
@@ -102,9 +99,9 @@ var ui = {
       dayImageDiv = progressDiv.getElementsByClassName('day-image')[0],
       progressWidth = progressImgs[0].parentElement.parentElement.clientWidth;
     progressImgs[1].style.left = (progressWidth - 28) * percent + 'px';
-    progressImgs[1].style.top = percent >= .5 ?
-     (38 * percent) - 40 + 'px' 
-     : (38 * (1 - percent)) - 40 + 'px';
+    progressImgs[1].style.top = percent < 0.5 ?
+      10 - 38 * (percent * 2) + 'px'
+      : 10 - 38 * ((1 - percent) * 2) + 'px';
   },
 
   updateFutureWeather : function(data) {
@@ -284,10 +281,13 @@ var ui = {
     }
   },
 
-  updateBackground : function(changeStatusBar, sunrise, sunset) {
-    var bodyElement = document.getElementsByTagName('body')[0];
-    var currentHour = new Date().getHours();
-    if (currentHour >= sunrise && currentHour < sunset) {
+  updateBackground : function(changeStatusBar) {
+    var bodyElement = document.getElementsByTagName('body')[0],
+      data = appData.getLastWeather()[0],
+      currentTime = Date.now(),
+      sunrise = new Date(data.sys.sunrise * 1000),
+      sunset = new Date(data.sys.sunset * 1000);
+    if (currentTime >= sunrise && currentTime < sunset) {
       bodyElement.classList.remove('night');
       bodyElement.classList.add('day');
       if (changeStatusBar) this.updateStatusBar("#419BD3");
@@ -346,9 +346,7 @@ var ui = {
     // Update the background if setting allows 
     // find sunrise and sunset values for background changes
     // unix timestamp * 1000 for epoch date
-    var sunrise = new Date(data[0].sys.sunrise * 1000).getHours();
-    var sunset = new Date(data[0].sys.sunset * 1000).getHours();
-    if (userSettings.backgroundChanges) this.updateBackground(true, sunrise, sunset);
+    if (userSettings.backgroundChanges) this.updateBackground(true);
     this.updateWeatherData(data[0]);
     this.drawSunriseSunset();
     // After everything is updated, hide the loader screen
