@@ -221,6 +221,13 @@ body.night #settings > .setting {
   vertical-align: middle;
 }
 
+.med-icon {
+  width: 36px;
+  height: 36px;
+  padding: 0 5px;
+  vertical-align: middle;
+}
+
 #weather-chance span {
   vertical-align: middle;
 }
@@ -310,6 +317,7 @@ body.night #settings > .setting {
 }
 
 #weather-extended {
+  position: relative;
   padding-top: 20px;
 }
 
@@ -342,10 +350,106 @@ body.night #settings > .setting {
   right: 10px;
 }
 
+.day-progress div span {
+  position: absolute;
+  font-size: 80%;
+  top: 35px;
+}
+
+.day-progress div .left {
+  left: 13%;
+}
+
+.day-progress div .right {
+  right: 13%;
+}
+
 .day-image img {
   position: absolute;
   top: 24px;
   left: 20px;
+}
+
+.cloud-cover {
+  position: absolute;
+  top: 10%;
+  width: 50px;
+  left: calc(50% - 25px);
+}
+
+.cloud-cover img {
+  left: -3px;
+  position: relative;
+}
+
+.cloud-cover span {
+  display: block;
+  position: relative;
+  top: -6px;
+  text-align: center;
+}
+
+.flex-centered {
+  display: flex;
+  justify-content: center;
+  position: relative;
+  top: -35px;
+}
+
+.wind {
+  border: 2px solid black;
+  border-radius: 10px;
+  width: 40%;
+  margin: 0 10px;
+}
+
+.wind span {
+  display: block;
+  padding: 5px 0;
+}
+
+.wind img {
+  width: 64px;
+  height: 64px;
+}
+
+.humidity-pressure {
+  width: 40%;
+  border: 2px solid black;
+  border-radius: 10px;
+  margin: 0 10px;
+}
+
+.humidity-pressure * {
+  display: block;
+  margin: auto;
+}
+
+.humidity-pressure span:first-of-type {
+  padding-bottom: 11px;
+}
+
+.three-day-forecast {
+  display: flex;
+  justify-content: center;
+}
+
+.three-day-forecast div {
+  width: 33%;
+  max-width: 200px;
+  display: table;
+}
+
+.three-day-forecast div > span:first-of-type {
+  display: table-caption;
+}
+
+.three-day-forecast div > div {
+  display: table-cell
+}
+
+.three-day-forecast div > span:last-of-type {
+  display: table-footer-group;
 }
 
 #chart-buttons {
@@ -376,6 +480,10 @@ body.night #settings > .setting {
   body {
     font-size: 120%;
   }
+
+  .humidity-pressure span:first-of-type {
+  padding-bottom: 14px;
+}
 
   .w-future {
     width: 150px;

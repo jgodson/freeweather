@@ -38,9 +38,11 @@ var ui = {
   },
 
   drawSunriseSunset : function() {
+    // "this" in this function can refer to an event instead of the ui object so don't use it
     // Grab the data we need to calculate everything
     var today = appData.getLastWeather()[0],
       progressDiv = document.getElementsByClassName('day-progress')[0],
+      childDivs = progressDiv.getElementsByTagName('div'),
       progressImgs = progressDiv.getElementsByTagName('img'),
       progressWidth = progressDiv.clientWidth,
       now = Date.now(),
@@ -52,12 +54,18 @@ var ui = {
       percent;
     if (night) {
       percent = (now - sunset) / (sunrise - sunset);
+      // Set text near sunrise and sunset icons
+      childDivs[0].children[1].innerText = ui.convertTime(sunset).substring(16);
+      childDivs[2].children[1].innerText = ui.convertTime(sunrise).substring(16);
     }
     else {
       if (sunset != appData.getLastSunset()) {
         appData.setLastSunset(sunset);
       }
       percent = (now - sunrise) / (sunset - sunrise);
+      // Set text near sunrise and sunset icons
+      childDivs[0].children[1].innerText = ui.convertTime(sunrise).substring(16);
+      childDivs[2].children[1].innerText = ui.convertTime(sunset).substring(16);
     }
     // Adjust position of sun/moon
     progressImgs[1].style.left = progressWidth * percent - 12 + 'px';
@@ -102,6 +110,31 @@ var ui = {
     progressImgs[1].style.top = percent < 0.5 ?
       10 - 38 * (percent * 2) + 'px'
       : 10 - 38 * ((1 - percent) * 2) + 'px';
+  },
+
+  updateCloudCover : function(data) {
+    var element = document.getElementsByClassName('cloud-cover')[0]
+      .getElementsByTagName('span')[0];
+    element.innerText = (data.clouds.all || 0) + '%';
+  },
+
+  updateWind : function(data) {
+    var element = document.getElementsByClassName('wind')[0],
+      dial = element.getElementsByTagName('img')[0],
+      speed = element.getElementsByTagName('span')[1];
+    dial.style.transform = "rotate(" + data.wind.deg + "deg)";
+    speed.innerText = 
+      settings.display[userSettings.system].convertWindSpeed(data.wind.speed).toFixed(2)
+      + " " + settings.display[userSettings.system].windUnit;
+  },
+
+  updateHumidityPressure : function(data) {
+    var elements = document.getElementsByClassName('humidity-pressure')[0]
+      .getElementsByTagName('span');
+    elements[0].innerText = (data.main.humidity || 0) + '%';
+    elements[1].innerText = 
+      settings.display[userSettings.system].convertPressure(data.main.pressure).toFixed(1)
+      + " " + settings.display[userSettings.system].pressureUnit;
   },
 
   updateFutureWeather : function(data) {
@@ -348,7 +381,10 @@ var ui = {
     // unix timestamp * 1000 for epoch date
     if (userSettings.backgroundChanges) this.updateBackground(true);
     this.updateWeatherData(data[0]);
-    this.drawSunriseSunset();
+    this.drawSunriseSunset(); // Data retrieved in function due to called on resize event
+    this.updateCloudCover(data[0]);
+    this.updateWind(data[0]);
+    this.updateHumidityPressure(data[0]);
     // After everything is updated, hide the loader screen
     this.hideLoader();
   },

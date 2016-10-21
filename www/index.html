@@ -83,12 +83,26 @@
         </div>
         <div id="weather-extended">
           <div class='day-progress'>
-            <div><img class='small-icon' src="img/icons/sunrise.png" /></div>
+            <div><img class='small-icon' src="img/icons/sunrise.png" /><span class='left'></span></div>
             <div class="day-image"><img class='small-icon' src="img/icons/01d.png" /></div>
-            <div><img class='small-icon' src="img/icons/sunset.png" /></div>
+            <div><img class='small-icon' src="img/icons/sunset.png" /><span class='right'></span></div>
           </div>
-          <div><img class="small-icon" src="img/icons/03d.png" /><span class='cloud-cover'></span></div>
-
+          <div class='cloud-cover'>
+            <img class="med-icon" src="img/icons/03d.png" />
+            <span></span>
+          </div>
+          <div class='flex-centered'>
+            <div class='wind'>
+              <span>WIND</span>
+              <img src="img/icons/wind-dir.png" />
+              <span></span>
+            </div>
+            <div class='humidity-pressure'>
+              <img class='med-icon' src="img/icons/humidity.png" /><span></span>
+              <img class='med-icon' src="img/icons/barometer.png" /><span></span>
+            </div>
+            <div class='three-day-forecast'></div>
+          </div>
         </div>
       </div>
       <div class='view' id='charts'>
