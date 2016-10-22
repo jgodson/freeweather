@@ -221,18 +221,17 @@ body.night #settings > .setting {
 .small-icon {
   width: 24px;
   height: 24px;
-  padding: 0 5px;
   vertical-align: middle;
 }
 
 .med-icon {
   width: 36px;
   height: 36px;
-  padding: 0 5px;
   vertical-align: middle;
 }
 
 #weather-chance span {
+  padding: 0 5px;
   vertical-align: middle;
 }
 
@@ -284,7 +283,11 @@ body.night #settings > .setting {
   width: 100%;
   right: -100%;
   transition: all 300ms;
-  overflow: scroll;
+  overflow: auto;
+}
+
+#main {
+  overflow: hidden;
 }
 
 .inView {
@@ -322,7 +325,7 @@ body.night #settings > .setting {
 
 #weather-extended {
   position: relative;
-  padding-top: 20px;
+  padding-top: 14px;
 }
 
 .day-progress {
@@ -376,7 +379,7 @@ body.night #settings > .setting {
 
 .cloud-cover {
   position: absolute;
-  top: 10%;
+  top: 20px;
   width: 50px;
   left: calc(50% - 25px);
 }
@@ -397,6 +400,7 @@ body.night #settings > .setting {
   display: flex;
   justify-content: center;
   position: relative;
+  flex-wrap: wrap;
   top: -35px;
 }
 
@@ -418,13 +422,13 @@ body.night #settings > .setting {
 }
 
 .wind div {
-  height: 0;
+  height: 10px;
 }
 
 .wind div img {
-  width: 24px;
-  height: 24px;
-  bottom: 70px;
+  width: 16px;
+  height: 22px;
+  bottom: 7px;
   position: relative;
 }
 
@@ -440,31 +444,28 @@ body.night #settings > .setting {
   margin: auto;
 }
 
-.humidity-pressure span:first-of-type {
-  padding-bottom: 11px;
+.humidity-pressure div {
+  height: 14px;
+  margin: 3px 0;
+  font-size: 15px;
 }
 
 .three-day-forecast {
+  width: 100%;
   display: flex;
   justify-content: center;
 }
 
-.three-day-forecast div {
+.three-day-forecast > div {
+  border: 2px solid black;
+  border-radius: 10px;
+  margin: 0 5px;
+  margin-top: 20px;
   width: 33%;
-  max-width: 200px;
-  display: table;
 }
 
-.three-day-forecast div > span:first-of-type {
-  display: table-caption;
-}
-
-.three-day-forecast div > div {
-  display: table-cell
-}
-
-.three-day-forecast div > span:last-of-type {
-  display: table-footer-group;
+.three-day-forecast > div > div > div:nth-child(2n) {
+  padding: 2px 0;
 }
 
 #chart-buttons {
@@ -496,9 +497,11 @@ body.night #settings > .setting {
     font-size: 120%;
   }
 
-  .humidity-pressure span:first-of-type {
-  padding-bottom: 14px;
-}
+  .humidity-pressure div {
+    margin: 2px 0;
+    font-size: 18px;
+    height: 19px;
+  }
 
   .w-future {
     width: 150px;
@@ -544,5 +547,11 @@ body.night #settings > .setting {
   img {
     width: 160px;
     height: 160px;
+  }
+}
+
+@media screen and (max-height: 567px) {
+  #main {
+    overflow: auto;
   }
 }

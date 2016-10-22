@@ -36,8 +36,16 @@ var appData = {
     localStorage.setItem("lastSunset", time);
   },
 
-  getLastSunset : function () {
+  getLastSunset : function() {
     return parseInt(localStorage.getItem("lastSunset"));
+  },
+
+  setTodayTemps : function(date, temps) {
+    localStorage.setItem('hightemp', JSON.stringify({ date : date, temps : temps}));
+  },
+
+  getTodayTemps : function() {
+    return JSON.parse(localStorage.getItem('hightemp'));
   }
 }
 

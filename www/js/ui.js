@@ -12,7 +12,7 @@ var ui = {
     img.src = "img/icons/" + today.weather[0].icon + ".png";
     // Convert temperature to proper units and show
     var temperature = settings.display[userSettings.system].convertTemp(today.main.temp).toFixed(1);
-    tempdiv.innerHTML = temperature + ' ' + settings.display[userSettings.system].tempUnit;
+    tempdiv.innerHTML = temperature + settings.display[userSettings.system].tempUnit;
     // Update the description
     mainElement.getElementsByTagName('div')[1].innerText = today.weather[0].description;
     // Update the rain and snow % chance
@@ -108,9 +108,9 @@ var ui = {
 
   updateWind : function(data) {
     var element = document.getElementsByClassName('wind')[0],
-      dial = element.getElementsByTagName('img')[0],
+      dial = element.getElementsByTagName('img')[1],
       speed = element.getElementsByTagName('span')[1];
-    dial.style.transform = "rotate(" + data.wind.deg + "deg)";
+    dial.style.transform = "rotate(" + (data.wind.deg + 180) + "deg)"; // point opposite direction
     speed.innerText = 
       settings.display[userSettings.system].convertWindSpeed(data.wind.speed).toFixed(2)
       + " " + settings.display[userSettings.system].windUnit;
@@ -125,8 +125,90 @@ var ui = {
       + " " + settings.display[userSettings.system].pressureUnit;
   },
 
-  updateThreeDay : function(data) {
-
+  updateThreeDay : function(data, days) {
+    var element = document.getElementsByClassName('three-day-forecast')[0],
+      previousDate,
+      currentDate,
+      iconCount = {},
+      currentIcon,
+      currentDay = 0,
+      hiTemp = 0,
+      loTemp = 9999,
+      rain = 0,
+      snow = 0,
+      html = '';
+    // generate html from values
+    for (var i = 0; currentDay < days ; i++) {
+      currentDate = this.convertTime(data.list[i].dt_txt, true).substring(0, 3);
+      if (!previousDate) previousDate = currentDate;
+      if (currentDate != previousDate) {
+        // get/store today's high and low (or change if different from previous)
+        if (currentDay == 0) {
+          var previousData = appData.getTodayTemps();
+          var today = ui.convertTime(Date.now()).substring(4, 15);
+          if (previousData && previousData.date == today) {
+            if (previousData.temps.hi > hiTemp || previousData.temps.lo < loTemp) {
+              appData.setTodayTemps(previousData.date, 
+              {
+                hi : hiTemp,
+                lo : loTemp
+              });
+            }
+            else {
+              if (previousData.temps.hi > hiTemp) hiTemp = previousData.temps.hi;
+              if (previousData.temps.lo < loTemp) loTemp = previousData.temps.lo;
+            }
+          }
+          else {
+            appData.setTodayTemps(today, 
+            {
+              hi : hiTemp,
+              lo : loTemp
+            });
+          }
+        }
+        html += "<div><span>" + previousDate.toUpperCase() + "</span>";
+        var topIcon = Object.keys(iconCount).sort(function(keyA, keyB) {
+          if (iconCount[keyA] > iconCount[keyB]) return 1;
+          if (iconCount[keyA] < iconCount[keyB]) return -1;
+          return 0;
+        });
+        html += "<div><div><img class='small-icon' src='img/icons/" + topIcon[0]
+        + "d.png' /></div>";
+        html += 
+          "<div>HI " + settings.display[userSettings.system].convertTemp(hiTemp).toFixed(1) 
+          + settings.display[userSettings.system].tempUnit
+          + "</div>"
+        html += "<div>LO " + settings.display[userSettings.system].convertTemp(loTemp).toFixed(1) 
+          + settings.display[userSettings.system].tempUnit + "</div>";
+        html += "<div><img class='small-icon' src='img/icons/rain-chance.png' /><span class='space-left'>"
+          + settings.display[userSettings.system].convertMeasurement(rain).toFixed(2) + " "
+          + settings.display[userSettings.system].measurementUnit + "</span>"
+          + "</div><div><img class='small-icon' src='img/icons/snow-chance.png' />"
+          + "<span class='space-left'>" + settings.display[userSettings.system].convertMeasurement(snow).toFixed(2)
+          + " " + settings.display[userSettings.system].measurementUnit + "</span></div></div></div>"
+        // reset values
+        previousDate = currentDate;
+        currentDay++;
+        hiTemp = 0;
+        loTemp = 9999;
+        snow = 0;
+        rain = 0;
+        iconCount = {};
+      }
+        currentIcon = data.list[i].weather[0].icon.substring(0,2);
+        if (data.list[i].main.temp > hiTemp) hiTemp = data.list[i].main.temp;
+        if (data.list[i].main.temp < loTemp) loTemp = data.list[i].main.temp;
+        if (data.list[i].rain) {
+          if (data.list[i].rain['3h']) rain += data.list[i].rain['3h'];
+        } 
+        if (data.list[i].snow) {
+          if (data.list[i].snow['3h']) snow += data.list[i].snow['3h'];
+        } 
+        iconCount[currentIcon] ? iconCount[currentIcon]++ 
+          : iconCount[currentIcon] = 1;
+    }
+    element.innerHTML = html;
   },
 
   updateFutureWeather : function(data) {
@@ -377,6 +459,7 @@ var ui = {
     this.updateCloudCover(data[0]);
     this.updateWind(data[0]);
     this.updateHumidityPressure(data[0]);
+    this.updateThreeDay(data[1], 3);
     // After everything is updated, hide the loader screen
     this.hideLoader();
   },
