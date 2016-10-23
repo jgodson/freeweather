@@ -25,7 +25,7 @@ var views = {
           ui.updateStatusBar("#A7A7A7");
         }
         else {
-          ui.updateBackground(true);
+          ui.updateBackground(false);
         }
       }
     }

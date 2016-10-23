@@ -125,7 +125,7 @@ var ui = {
       + " " + settings.display[userSettings.system].pressureUnit;
   },
 
-  updateThreeDay : function(data, days) {
+  updateDaySummary : function(data, days) {
     var element = document.getElementsByClassName('three-day-forecast')[0],
       previousDate,
       currentDate,
@@ -147,11 +147,11 @@ var ui = {
           var previousData = appData.getTodayTemps();
           var today = ui.convertTime(Date.now()).substring(4, 15);
           if (previousData && previousData.date == today) {
-            if (previousData.temps.hi > hiTemp || previousData.temps.lo < loTemp) {
+            if (hiTemp > previousData.temps.hi || loTemp < previousData.temps.lo) {
               appData.setTodayTemps(previousData.date, 
-              {
-                hi : hiTemp,
-                lo : loTemp
+                {
+                  hi : hiTemp > previousData.temps.hi ? hiTemp : previousData.temps.hi,
+                  lo : loTemp < previousData.temps.lo ? loTemp : previousData.temps.lo
               });
             }
             else {
@@ -161,13 +161,16 @@ var ui = {
           }
           else {
             appData.setTodayTemps(today, 
-            {
-              hi : hiTemp,
-              lo : loTemp
+              {
+                hi : hiTemp,
+                lo : loTemp
             });
           }
+          html += "<div><span>TODAY</span>";
         }
-        html += "<div><span>" + previousDate.toUpperCase() + "</span>";
+        else {
+          html += "<div><span>" + previousDate.toUpperCase() + "</span>";
+        }
         var topIcon = Object.keys(iconCount).sort(function(keyA, keyB) {
           if (iconCount[keyA] > iconCount[keyB]) return 1;
           if (iconCount[keyA] < iconCount[keyB]) return -1;
@@ -181,12 +184,23 @@ var ui = {
           + "</div>"
         html += "<div>LO " + settings.display[userSettings.system].convertTemp(loTemp).toFixed(1) 
           + settings.display[userSettings.system].tempUnit + "</div>";
-        html += "<div><img class='small-icon' src='img/icons/rain-chance.png' /><span class='space-left'>"
-          + settings.display[userSettings.system].convertMeasurement(rain).toFixed(2) + " "
-          + settings.display[userSettings.system].measurementUnit + "</span>"
-          + "</div><div><img class='small-icon' src='img/icons/snow-chance.png' />"
-          + "<span class='space-left'>" + settings.display[userSettings.system].convertMeasurement(snow).toFixed(2)
-          + " " + settings.display[userSettings.system].measurementUnit + "</span></div></div></div>"
+        html += "<div><img class='small-icon' src='img/icons/rain-chance.png' /><span class='space-left'>";
+          if (rain > 0) {
+            html += settings.display[userSettings.system].convertMeasurement(rain).toFixed(2) + " "
+              + " " + settings.display[userSettings.system].measurementUnit + "</span></div>";
+          }
+          else {
+            html += " none</span></div>";
+          }
+          html += "<div><img class='small-icon' src='img/icons/snow-chance.png' /><span class='space-left'>";
+          if (snow > 0) {
+            html += settings.display[userSettings.system].convertMeasurement(snow).toFixed(2)
+              + " " + settings.display[userSettings.system].measurementUnit + "</span></div>";
+          }
+          else {
+            html += " none</span></div>";
+          }
+          html += "</div></div>";
         // reset values
         previousDate = currentDate;
         currentDay++;
@@ -212,13 +226,14 @@ var ui = {
   },
 
   updateFutureWeather : function(data) {
-    var mainElement = document.getElementById('weather-future').children[0];
-    var date;
-    var temp;
-    var html = "";
-    var previousDay;
-    var today;
-    var precipitation;
+    var mainElement = document.getElementById('weather-future').children[0],
+      date,
+      temp,
+      html = "",
+      previousDay,
+      today,
+      precipitation,
+      currentTime = this.convertTime(Date.now(), true).substring(0, 20);
     for (var i = 0; i < data.cnt; i++) {
       var imgsrc = "img/icons/" + data.list[i].weather[0].icon + ".png";
       date = this.convertTime(data.list[i].dt_txt, true).substring(0, 20);
@@ -232,7 +247,7 @@ var ui = {
         }
       }
       else {
-        if (date.search(/(\d[0,1]|\s9):[0-9][0-9] PM/) > -1) { // If 9PM or later, is for tomorrow
+        if (currentTime.search(/(\d[0,1]|\s9):[0-9][0-9] PM/) > -1) { // If 9PM or later, is for tomorrow
           html += "<div class='day-group'>TOMORROW " + date.substring(4, 10).toUpperCase() + "</div>";
         }
         else {
@@ -430,17 +445,24 @@ var ui = {
     else {
       time = new Date(time).toString().split('G')[0].trim(); // Make it a date and remove timezone
     }
-    var ampm = 'AM';
+    var ampm = 'AM',
+    tIndex = 4;
     time = time.split(' '); // split date/time into array
-    if (excludeYear) time[3] = ""; // remove year if desired
-    time[4] = time[4].split(':'); // split time into array
-    time[4].pop(); // Remove seconds
-    if (parseInt(time[4][0]) >= 12) ampm = 'PM'; // check if am/pm
-    if (parseInt(time[4][0]) == 0 ) time[4][0] = parseInt(time[4][0]) + 12;
-    if (parseInt(time[4][0]) < 10 && ampm == 'AM') time[4][0] = time[4][0].substring(1); // remove 0 if only 1 digit
-    if (parseInt(time[4][0]) > 12 && ampm == 'PM') time[4][0] = parseInt(time[4][0]) - 12; // subtract 12 hours if > 12
-    time[4] = time[4].join(':'); // combine time into string
-    time = time.join(' ') + " " + ampm; // combine into date/time string and add am/pm
+    if (excludeYear) {
+       time.splice(3, 1); // remove year if desired
+       tIndex--; // change index since array is smaller now
+    }
+    time[tIndex] = time[tIndex].split(':'); // split time into array
+    time[tIndex].pop(); // Remove seconds
+    if (parseInt(time[tIndex][0]) >= 12) ampm = 'PM'; // check if am/pm
+    // If hour is 0, add 12
+    if (parseInt(time[tIndex][0]) == 0 ) time[tIndex][0] = parseInt(time[tIndex][0]) + 12;
+    // remove preceding 0 if only 1 digit
+    if (parseInt(time[tIndex][0]) < 10 && ampm == 'AM') time[tIndex][0] = time[tIndex][0].substring(1);
+    // subtract 12 hours if > 12
+    if (parseInt(time[tIndex][0]) > 12 && ampm == 'PM') time[tIndex][0] = parseInt(time[tIndex][0]) - 12;
+    time[tIndex] = time[tIndex].join(':'); // combine hours & minutes
+    time = time.join(' ') + " " + ampm; // combine into date/time and add am/pm
     return time;
   },
 
@@ -459,7 +481,7 @@ var ui = {
     this.updateCloudCover(data[0]);
     this.updateWind(data[0]);
     this.updateHumidityPressure(data[0]);
-    this.updateThreeDay(data[1], 3);
+    this.updateDaySummary(data[1], 3);
     // After everything is updated, hide the loader screen
     this.hideLoader();
   },
