@@ -47,11 +47,24 @@ var ui = {
       progressWidth = progressDiv.clientWidth,
       now = Date.now(),
       sunrise = today.sys.sunrise * 1000,
-      sunset = now > sunrise ? today.sys.sunset * 1000 
-        : appData.getLastSunset() // Or if there is no last sunset, subtract 1 day from this one
-        || new Date(new Date(today.sys.sunset * 1000).setDate(new Date().getDate() -1)).getTime(),
-      night = now > sunset,
+      night = false,
+      sunset,
       percent;
+      // Get the sunset
+      if (now > sunrise) {
+        sunset = today.sys.sunset * 1000;
+      }
+      else {
+        night = true;
+        // if there is no last sunset or more than 24 hours later, subtract 1 day from this one
+        if ((appData.getLastSunset() + 86400000) > now) {
+          sunset = appData.getLastSunset();
+        }
+        else {
+          sunset = new Date(new Date(today.sys.sunset * 1000).setDate(new Date().getDate())).getTime();
+          appData.setLastSunset(sunset);
+        }
+      }
     if (night) {
       percent = (now - sunset) / (sunrise - sunset);
       // Set text near sunrise and sunset icons
@@ -67,6 +80,7 @@ var ui = {
       childDivs[0].children[1].innerText = ui.convertTime(sunrise).substring(16);
       childDivs[2].children[1].innerText = ui.convertTime(sunset).substring(16);
     }
+    console.log(percent);
     // Adjust position of sun/moon
     progressImgs[1].style.left = (progressWidth - 28) * percent + 'px';
     progressImgs[1].style.top = percent < 0.5 ?
@@ -101,13 +115,12 @@ var ui = {
   },
 
   updateCloudCover : function(data) {
-    var element = document.getElementsByClassName('cloud-cover')[0]
-      .getElementsByTagName('span')[0];
+    var element = document.querySelector('.cloud-cover span');
     element.innerText = (data.clouds.all || 0) + '%';
   },
 
   updateWind : function(data) {
-    var element = document.getElementsByClassName('wind')[0],
+    var element = document.querySelector('.wind'),
       dial = element.getElementsByTagName('img')[1],
       speed = element.getElementsByTagName('span')[1];
     dial.style.transform = "rotate(" + (data.wind.deg + 180) + "deg)"; // point opposite direction
@@ -117,8 +130,7 @@ var ui = {
   },
 
   updateHumidityPressure : function(data) {
-    var elements = document.getElementsByClassName('humidity-pressure')[0]
-      .getElementsByTagName('span');
+    var elements = document.querySelectorAll('.humidity-pressure span');
     elements[0].innerText = (data.main.humidity || 0) + '%';
     elements[1].innerText = 
       settings.display[userSettings.system].convertPressure(data.main.pressure).toFixed(1)
@@ -126,7 +138,7 @@ var ui = {
   },
 
   updateDaySummary : function(data, days) {
-    var element = document.getElementsByClassName('three-day-forecast')[0],
+    var element = document.querySelector('.three-day-forecast'),
       previousDate,
       currentDate,
       iconCount = {},
@@ -145,28 +157,40 @@ var ui = {
         // get/store today's high and low (or change if different from previous)
         if (currentDay == 0) {
           var previousData = appData.getTodayTemps();
-          var today = ui.convertTime(Date.now()).substring(4, 15);
-          if (previousData && previousData.date == today) {
-            if (hiTemp > previousData.temps.hi || loTemp < previousData.temps.lo) {
-              appData.setTodayTemps(previousData.date, 
-                {
-                  hi : hiTemp > previousData.temps.hi ? hiTemp : previousData.temps.hi,
-                  lo : loTemp < previousData.temps.lo ? loTemp : previousData.temps.lo
-              });
+          var today = ui.convertTime(Date.now()).substring(4, 24);
+          var tomorrow = false;
+          if (today.search(/(\d[0,1]|\s9):[0-9][0-9] PM/) > -1) { // If 9PM or later, is for tomorrow
+            tomorrow = true;
+          }
+          today = today.substring(0, 11);
+          if (previousData && previousData.date == today && !tomorrow) {
+            if ((hiTemp > previousData.temps.hi || loTemp < previousData.temps.lo) 
+              && ui.convertTime(data.list[i].dt_txt).substring(4, 15) == today) {
+                appData.setTodayTemps(previousData.date, 
+                  {
+                    hi : hiTemp > previousData.temps.hi ? hiTemp : previousData.temps.hi,
+                    lo : loTemp < previousData.temps.lo ? loTemp : previousData.temps.lo
+                });
             }
             else {
               if (previousData.temps.hi > hiTemp) hiTemp = previousData.temps.hi;
               if (previousData.temps.lo < loTemp) loTemp = previousData.temps.lo;
             }
+            html += "<div><span>TODAY</span>";
           }
           else {
-            appData.setTodayTemps(today, 
-              {
-                hi : hiTemp,
-                lo : loTemp
-            });
+            if (!tomorrow) {
+              appData.setTodayTemps(today, 
+                {
+                  hi : hiTemp,
+                  lo : loTemp
+              });
+              html += "<div><span>TODAY</span>";
+            }
+            else {
+              html += "<div><span>" + previousDate.toUpperCase() + "</span>";
+            }
           }
-          html += "<div><span>TODAY</span>";
         }
         else {
           html += "<div><span>" + previousDate.toUpperCase() + "</span>";
@@ -226,7 +250,7 @@ var ui = {
   },
 
   updateFutureWeather : function(data) {
-    var mainElement = document.getElementById('weather-future').children[0],
+    var mainElement = document.querySelector('#weather-future div'),
       date,
       temp,
       html = "",
@@ -404,7 +428,7 @@ var ui = {
   },
 
   updateBackground : function(changeStatusBar) {
-    var bodyElement = document.getElementsByTagName('body')[0],
+    var bodyElement = document.querySelector('body'),
       data = appData.getLastWeather()[0],
       currentTime = Date.now(),
       sunrise = new Date(data.sys.sunrise * 1000),

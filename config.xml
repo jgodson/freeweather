@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.jasongodson.freeweather" version="2.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
+<widget id="com.jasongodson.freeweather" version="2.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
   <name>Free Weather</name>
   <description>
     Uses the Open Weather API and your GPS coordinates to get accuarte local weather and display it in a pretty, easy to read format.
