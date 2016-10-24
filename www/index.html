@@ -27,7 +27,7 @@
   <meta name="msapplication-tap-highlight" content="no" />
   <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width" />
   <!-- This is a wide open CSP declaration. To lock this down for production, see below. -->
-  <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline'; style-src 'self' 'unsafe-inline'; media-src *" />
+  <!--<meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline'; style-src 'self' 'unsafe-inline'; media-src *" />
   <!-- Good default declaration:
   * gap: is required only on iOS (when using UIWebView) and is needed for JS->native communication
   * https://ssl.gstatic.com is required only on Android and is needed for TalkBack to function properly
@@ -36,7 +36,7 @@
     * Enable eval(): add 'unsafe-eval' to default-src
   * Create your own at http://cspisawesome.com
   -->
-  <!--<meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: 'unsafe-inline' https://ssl.gstatic.com; style-src 'self' 'unsafe-inline'; media-src *; connect-src http://api.openweathermap.org" />-->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: 'unsafe-inline' https://ssl.gstatic.com; style-src 'self' 'unsafe-inline'; media-src *; connect-src http://api.openweathermap.org" />
 
   <link rel="stylesheet" type="text/css" href="css/index.css" />
   <title>Free Weather</title>
@@ -57,35 +57,88 @@
         <img src="img/icons/temp-settings.png" />
         <span>&deg;C &deg;F</span>
       </div>
+      <div data-name="settings" class="setting">
+        <img src="img/icons/settings.png" />
+        <span>Settings</span>
+      </div>
       <div data-name="force-refresh" class="setting">
         <img src="img/icons/refresh.png" />
         <span>Refresh</span>
       </div>
     </div>
     <div id="app-content">
-      <div id="weather-primary">
-        <img src="img/icons/default.png" />
-        <div></div>
-        <div></div>
-        <div></div>
+      <div class='view inView' id='main'>
+        <div id="weather-primary">
+          <img src="img/icons/default.png" />
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+        <div id="weather-chance">
+          <p>
+            <span>Next 3 Hours:</span>
+            <img class="small-icon" src="img/icons/rain-chance.png" /><span></span>
+            <img class="small-icon" src="img/icons/snow-chance.png" /><span></span>
+          </p>
+        </div>
+        <div id="weather-extended">
+          <div class='day-progress'>
+            <div><img class='small-icon' src="img/icons/sunrise.png" /><span class='left'></span></div>
+            <div class="day-image"><img class='small-icon' src="img/icons/01d.png" /></div>
+            <div><img class='small-icon' src="img/icons/sunset.png" /><span class='right'></span></div>
+          </div>
+          <div class='cloud-cover'>
+            <img class="med-icon" src="img/icons/03d.png" />
+            <span></span>
+          </div>
+          <div class='flex-centered'>
+            <div class='wind'>
+              <span>WIND</span>
+              <div><img src="img/icons/north.png" /></div>
+              <img src="img/icons/wind-dir.png" />
+              <span></span>
+            </div>
+            <div class='humidity-pressure'>
+              <img class='med-icon' src="img/icons/humidity.png" />
+              <span></span>
+              <div>Humidity/Pressure</div>
+              <img class='med-icon' src="img/icons/barometer.png" />
+              <span></span>
+            </div>
+            <div class='three-day-forecast'></div>
+          </div>
+        </div>
       </div>
-      <div id="weather-chance">
-        <p>
-          <span>PRECIPITATION</span>
-          <img class="small-icon" src="img/icons/rain-chance.png" /><span></span>
-          <img class="small-icon" src="img/icons/snow-chance.png" /><span></span>
-        </p>
+      <div class='view' id='charts'>
+        <canvas id="hourlyChart" width="320" height="320"></canvas>
+        <div id="chart-buttons">
+          <button ontouchstart="ui.chartMethods.changeChartDays(1);">1 Day</button>
+          <button ontouchstart="ui.chartMethods.changeChartDays(3);">3 Days</button>
+          <button ontouchstart="ui.chartMethods.changeChartDays(5);">5 Days</button>
+        </div>
       </div>
-      <div id="weather-future"><div></div></div>
-      <div id="weather-updated"></div>
+      <div class='view' id='forecast'>
+        <div id="weather-future"><div></div></div>
+      </div>
+      <div id='settings-view'>
+        <div><label>Allow Background Changes</label><input data-action="background" type="checkbox"></div>
+        <div class='attribution'>
+          <button data-action="close">Close</button>
+          <p>The icons used in this app, as well as many more, are available from Icons8 - https://icons8.com/</p>
+          <p>Weather data retrieved from https://openweathermap.org/</p>
+        </div>
+      </div>
     </div>
+    <div id="weather-updated"></div>
   </div>
   <script type="text/javascript" src="cordova.js"></script>
+  <script type="text/javascript" src="js/Chart.bundle.min.js" async></script>
   <script type="text/javascript" src="js/config.js"></script>
   <script type="text/javascript" src="js/settings.js"></script>
   <script type="text/javascript" src="js/appEvents.js"></script>
   <script type="text/javascript" src="js/appMethods.js"></script>
   <script type="text/javascript" src="js/menuMethods.js"></script>
+  <script type="text/javascript" src="js/views.js"></script>
   <script type="text/javascript" src="js/appData.js"></script>
   <script type="text/javascript" src="js/ui.js"></script>
   <script type="text/javascript" src="js/index.js"></script>

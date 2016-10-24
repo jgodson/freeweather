@@ -27,21 +27,32 @@ var app = {
   // 'load', 'deviceready', 'offline', and 'online'.
   bindEvents : function() {
     document.addEventListener('deviceready', this.onDeviceReady, false);
-    document.addEventListener('resume', this.onDeviceReady, false);
-    document.getElementById('settings-arrow').addEventListener('touchend', appEvents.menuOpen, false);
+    document.addEventListener('resume', this.onResume, false);
+    window.addEventListener('resize', ui.drawSunriseSunset, false);
+    document.getElementById('settings-arrow').addEventListener('touchstart', appEvents.menuOpen, false);
     document.getElementById('app-content').addEventListener('touchstart', this.detectSwipe.startSwipe, false);
     document.getElementById('app-content').addEventListener('touchend', this.detectSwipe.endSwipe, false);
     // Add event listener for each menu item
     var elements = document.getElementsByClassName('setting');
     for (var index = 0; index < elements.length; index++) {
-      elements[index].addEventListener('touchend', appEvents.menuClick, false);
+      elements[index].addEventListener('touchstart', appEvents.menuClick, false);
     }
   },
   // deviceready Event Handler
   // The scope of 'this' is the event. In order to call the 'receivedEvent'
   // function, we must explicitly call 'app.receivedEvent(...);'
   onDeviceReady : function() {
-    appEvents.ready();
+    // Change iOS status bar to somewhat match loading screen
+    ui.updateStatusBar("#141414");
+    StatusBar.overlaysWebView(false); // Make sure webview doesn't overlap status bar
+    StatusBar.styleDefault();
+    userSettings = appData.getSettings() || settings.defaultSettings;
+    views.initialize(); // Populate Views Array with all views (class='view')
+    appEvents.ready(); // Signal that everything is initialized and ready to work
+  },
+
+  onResume : function() {
+    appEvents.ready(); // Skip all the initialization on resume
   },
 
   detectSwipe : {

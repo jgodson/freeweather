@@ -30,5 +30,41 @@ var appData = {
 
   getLastLocation : function() {
     return JSON.parse(localStorage.getItem("lastLocation"));
+  },
+
+  setLastSunset : function(time) {
+    localStorage.setItem("lastSunset", time);
+  },
+
+  getLastSunset : function() {
+    return parseInt(localStorage.getItem("lastSunset"));
+  },
+
+  setTodayTemps : function(date, temps) {
+    localStorage.setItem('hightemp', JSON.stringify({ date : date, temps : temps}));
+  },
+
+  getTodayTemps : function() {
+    return JSON.parse(localStorage.getItem('hightemp'));
+  }
+}
+
+var constants = {
+  DAYMAP : { 
+    Sun : "sunday",
+    Mon : "monday",
+    Tue : "tuesday",
+    Wed : "wednesday",
+    Thu : "thursday",
+    Fri : "friday",
+    Sat : "saturday"
+  },
+  TEMPMAP : {
+    C : "Celcius",
+    F : "Farenheit"
+  },
+  UNITMAP : {
+    mm : "Milimeters",
+    in : "Inches"
   }
 }

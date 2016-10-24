@@ -1,11 +1,9 @@
 var appEvents = {
   ready : function() {
-    userSettings = appData.getSettings() || defaultSettings;
     var currentTime = new Date();
     // Check if we have a stored result
     if (appData.getLastUpdated()) {
       // If we do, check if it's still valid (< 1 hour old)
-      console.log(((Date.parse(currentTime) - appData.getLastUpdated()) / 1000 / 60).toFixed(0), "minutes");
       if (Date.parse(currentTime) - appData.getLastUpdated() < 3600000 ) {
         // If still valid, display cached data
         var lastData = appData.getLastWeather();
@@ -81,7 +79,6 @@ var appEvents = {
     // Show cached data if there is any
     if (appData.getLastUpdated()) {
       // If still valid, display cached data
-      console.log('error: using cached data');
       var lastData = appData.getLastWeather();
       ui.updateUI(lastData, appData.getLastUpdated());
     }
@@ -112,6 +109,6 @@ var appEvents = {
   },
 
   swipe : function(direction) {
-    console.log('direction', direction);
+    direction === 'L' ? views.moveRight() : views.moveLeft();
   }
 }
